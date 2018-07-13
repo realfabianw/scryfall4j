@@ -51,7 +51,7 @@ public class CardInformation {
 	/**
 	 * The cards collector-number of this expansion.
 	 */
-	private final String collectorNumber;
+	private final int collectorNumber;
 	/**
 	 * The cards set-code.
 	 */
@@ -74,14 +74,14 @@ public class CardInformation {
 				: jObject.get("printed_text").getAsString();
 		this.flavor = jObject.get("flavor_text") == null ? "" : jObject.get("flavor_text").getAsString();
 		this.artist = jObject.get("artist").getAsString();
-		this.collectorNumber = jObject.get("collector_number").getAsString();
+		this.collectorNumber = jObject.get("collector_number").getAsInt();
 		this.setCode = jObject.get("set").getAsString();
 		this.language = Language.getLanguage(jObject.get("lang").getAsString());
 		this.imageUri = jObject.get("image_uris").getAsJsonObject().get("large").getAsString();
 	}
 
 	public CardInformation(String uniqueId, String oracleId, String name, String text, String flavor, String artist,
-			String collectorNumber, String setCode, Language language, String imageUri) {
+			int collectorNumber, String setCode, Language language, String imageUri) {
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
 		this.name = name;
@@ -233,7 +233,7 @@ public class CardInformation {
 	/**
 	 * @return the collectorNumber
 	 */
-	public String getCollectorNumber() {
+	public int getCollectorNumber() {
 		return collectorNumber;
 	}
 }
