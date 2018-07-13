@@ -21,7 +21,7 @@ import com.google.gson.JsonObject;
  * @author QUE
  *
  */
-public class Set {
+public class SetInformation {
 	/**
 	 * The sets unique code.
 	 */
@@ -38,21 +38,15 @@ public class Set {
 	 * A link to the sets icon (svg on server, png on disk)
 	 */
 	private final String iconUri;
-	/**
-	 * Saves the sets icon. This variable is not final as it's loaded if called. If
-	 * the icon can't be found in the given folder it will be downloaded and saved
-	 * for further usage.
-	 */
-	private BufferedImage icon;
 
-	public Set(JsonObject jObject) {
+	public SetInformation(JsonObject jObject) {
 		this.code = jObject.get("code").getAsString();
 		this.name = jObject.get("name").getAsString();
 		this.cardCount = jObject.get("card_count").getAsInt();
 		this.iconUri = jObject.get("icon_svg_uri").getAsString();
 	}
 
-	public Set(String code, String name, int cardCount, String iconUri) {
+	public SetInformation(String code, String name, int cardCount, String iconUri) {
 		this.code = code;
 		this.name = name;
 		this.cardCount = cardCount;
@@ -72,7 +66,7 @@ public class Set {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Set other = (Set) obj;
+		SetInformation other = (SetInformation) obj;
 		if (code == null) {
 			if (other.code != null)
 				return false;
@@ -95,30 +89,31 @@ public class Set {
 		return code;
 	}
 
-	/**
-	 * @return the icon
-	 * @throws IOException
-	 * @throws TranscoderException
-	 */
-	public BufferedImage getIcon(String pathSetDirectory) throws IOException, TranscoderException {
-		if (icon != null) {
-			return icon;
-		} else {
-			File dir = new File(pathSetDirectory);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-			File setIcon = new File(pathSetDirectory + code + ".png");
-			if (!setIcon.exists()) {
-				saveSVGtoPNG(iconUri, setIcon);
-				this.icon = ImageIO.read(setIcon);
-				return icon;
-			} else {
-				this.icon = ImageIO.read(setIcon);
-				return icon;
-			}
-		}
-	}
+//	/**
+//	 * Die getIcon()-Funktion wird aus dem Wrapper entfernt.
+//	 * @return the icon
+//	 * @throws IOException
+//	 * @throws TranscoderException
+//	 */
+//	public BufferedImage getIcon(String pathSetDirectory) throws IOException, TranscoderException {
+//		if (icon != null) {
+//			return icon;
+//		} else {
+//			File dir = new File(pathSetDirectory);
+//			if (!dir.exists()) {
+//				dir.mkdirs();
+//			}
+//			File setIcon = new File(pathSetDirectory + code + ".png");
+//			if (!setIcon.exists()) {
+//				saveSVGtoPNG(iconUri, setIcon);
+//				this.icon = ImageIO.read(setIcon);
+//				return icon;
+//			} else {
+//				this.icon = ImageIO.read(setIcon);
+//				return icon;
+//			}
+//		}
+//	}
 
 	/**
 	 * @return the iconUri

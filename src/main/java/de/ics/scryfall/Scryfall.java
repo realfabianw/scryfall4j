@@ -1,6 +1,8 @@
 package de.ics.scryfall;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -8,6 +10,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -57,12 +61,12 @@ public class Scryfall {
 	 * @return {@code List<Set> listSets}
 	 * @throws IOException
 	 */
-	public static List<Set> getAllSets() throws IOException {
-		List<Set> listSets = new ArrayList<>();
+	public static List<SetInformation> getAllSets() throws IOException {
+		List<SetInformation> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS).getAsJsonObject();
 		JsonArray setArray = result.get("data").getAsJsonArray();
 		for (JsonElement setElement : setArray) {
-			listSets.add(new Set(setElement.getAsJsonObject()));
+			listSets.add(new SetInformation(setElement.getAsJsonObject()));
 		}
 		return listSets;
 	}
@@ -78,12 +82,12 @@ public class Scryfall {
 	 * @return {@code List<Card> listCards}
 	 * @throws IOException
 	 */
-	public static List<Card> getCardByName(String cardName) throws IOException {
-		List<Card> listCards = new ArrayList<>();
+	public static List<CardInformation> getCardByName(String cardName) throws IOException {
+		List<CardInformation> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
 		JsonArray cardArray = result.get("data").getAsJsonArray();
 		for (JsonElement cardElement : cardArray) {
-			listCards.add(new Card(cardElement.getAsJsonObject()));
+			listCards.add(new CardInformation(cardElement.getAsJsonObject()));
 		}
 
 		return listCards;

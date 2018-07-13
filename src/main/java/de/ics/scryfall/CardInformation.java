@@ -20,7 +20,7 @@ import de.ics.scryfall.enums.Language;
  * @author QUE
  *
  */
-public class Card {
+public class CardInformation {
 	/**
 	 * The cards unique id.
 	 */
@@ -36,6 +36,23 @@ public class Card {
 	 */
 	private final String name;
 	/**
+	 * The cards (print-)text. If this is a non-english card this variable will be
+	 * the localized text.
+	 */
+	private final String text;
+	/**
+	 * the cards flavor if any exists.
+	 */
+	private final String flavor;
+	/**
+	 * The cards artist(-s).
+	 */
+	private final String artist;
+	/**
+	 * The cards collector-number of this expansion.
+	 */
+	private final String collectorNumber;
+	/**
 	 * The cards set-code.
 	 */
 	private final String setCode;
@@ -47,27 +64,31 @@ public class Card {
 	 * A link to the cards image.
 	 */
 	private final String imageUri;
-	/**
-	 * Saves the cards image. This variable is not final as it's loaded if called.
-	 * If the image can't be found in the given folder it will be downloaded and
-	 * saved for further usage.
-	 */
-	private BufferedImage image;
 
-	public Card(JsonObject jObject) {
+	public CardInformation(JsonObject jObject) {
 		this.uniqueId = jObject.get("id").getAsString();
 		this.oracleId = jObject.get("oracle_id").getAsString();
 		this.name = jObject.get("printed_name") == null ? jObject.get("name").getAsString()
 				: jObject.get("printed_name").getAsString();
+		this.text = jObject.get("printed_text") == null ? jObject.get("oracle_text").getAsString()
+				: jObject.get("printed_text").getAsString();
+		this.flavor = jObject.get("flavor_text") == null ? "" : jObject.get("flavor_text").getAsString();
+		this.artist = jObject.get("artist").getAsString();
+		this.collectorNumber = jObject.get("collector_number").getAsString();
 		this.setCode = jObject.get("set").getAsString();
 		this.language = Language.getLanguage(jObject.get("lang").getAsString());
 		this.imageUri = jObject.get("image_uris").getAsJsonObject().get("large").getAsString();
 	}
 
-	public Card(String uniqueId, String oracleId, String name, String setCode, Language language, String imageUri) {
+	public CardInformation(String uniqueId, String oracleId, String name, String text, String flavor, String artist,
+			String collectorNumber, String setCode, Language language, String imageUri) {
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
 		this.name = name;
+		this.text = text;
+		this.flavor = flavor;
+		this.artist = artist;
+		this.collectorNumber = collectorNumber;
 		this.setCode = setCode;
 		this.language = language;
 		this.imageUri = imageUri;
@@ -86,7 +107,7 @@ public class Card {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Card other = (Card) obj;
+		CardInformation other = (CardInformation) obj;
 		if (uniqueId == null) {
 			if (other.uniqueId != null)
 				return false;
@@ -95,25 +116,32 @@ public class Card {
 		return true;
 	}
 
-	public BufferedImage getImage(String pathCardDirectory) throws IOException, TranscoderException {
-		if (image != null) {
-			return image;
-		} else {
-			File dir = new File(pathCardDirectory);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-			File card = new File(pathCardDirectory + uniqueId + ".jpg");
-			if (!card.exists()) {
-				this.image = ImageIO.read(new URL(imageUri));
-				ImageIO.write(image, "jpg", card);
-				return image;
-			} else {
-				this.image = ImageIO.read(card);
-				return image;
-			}
-		}
-	}
+//	/**
+//	 * Die getImage()-Funktion wird aus Scryfall entfernt und in TCG Inventory gepackt.
+//	 * @param pathCardDirectory
+//	 * @return
+//	 * @throws IOException
+//	 * @throws TranscoderException
+//	 */
+//	public BufferedImage getImage(String pathCardDirectory) throws IOException, TranscoderException {
+//		if (image != null) {
+//			return image;
+//		} else {
+//			File dir = new File(pathCardDirectory);
+//			if (!dir.exists()) {
+//				dir.mkdirs();
+//			}
+//			File card = new File(pathCardDirectory + uniqueId + ".jpg");
+//			if (!card.exists()) {
+//				this.image = ImageIO.read(new URL(imageUri));
+//				ImageIO.write(image, "jpg", card);
+//				return image;
+//			} else {
+//				this.image = ImageIO.read(card);
+//				return image;
+//			}
+//		}
+//	}
 
 	/**
 	 * @return the imageUri
@@ -179,5 +207,33 @@ public class Card {
 	public String toString() {
 		return "Card [uniqueId=" + uniqueId + ", oracleId=" + oracleId + ", name=" + name + ", setCode=" + setCode
 				+ ", language=" + language + ", imageUri=" + imageUri + "]";
+	}
+
+	/**
+	 * @return the text
+	 */
+	public String getText() {
+		return text;
+	}
+
+	/**
+	 * @return the flavor
+	 */
+	public String getFlavor() {
+		return flavor;
+	}
+
+	/**
+	 * @return the artist
+	 */
+	public String getArtist() {
+		return artist;
+	}
+
+	/**
+	 * @return the collectorNumber
+	 */
+	public String getCollectorNumber() {
+		return collectorNumber;
 	}
 }
