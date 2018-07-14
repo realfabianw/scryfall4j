@@ -51,7 +51,7 @@ public class CardInformation {
 	/**
 	 * The cards collector-number of this expansion.
 	 */
-	private final int collectorNumber;
+	private final String collectorNumber;
 	/**
 	 * The cards set-code.
 	 */
@@ -74,14 +74,14 @@ public class CardInformation {
 				: jObject.get("printed_text").getAsString();
 		this.flavor = jObject.get("flavor_text") == null ? "" : jObject.get("flavor_text").getAsString();
 		this.artist = jObject.get("artist").getAsString();
-		this.collectorNumber = jObject.get("collector_number").getAsInt();
+		this.collectorNumber = jObject.get("collector_number").getAsString();
 		this.setCode = jObject.get("set").getAsString();
 		this.language = Language.getLanguage(jObject.get("lang").getAsString());
 		this.imageUri = jObject.get("image_uris").getAsJsonObject().get("large").getAsString();
 	}
 
 	public CardInformation(String uniqueId, String oracleId, String name, String text, String flavor, String artist,
-			int collectorNumber, String setCode, Language language, String imageUri) {
+			String collectorNumber, String setCode, Language language, String imageUri) {
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
 		this.name = name;
@@ -198,17 +198,6 @@ public class CardInformation {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Card [uniqueId=" + uniqueId + ", oracleId=" + oracleId + ", name=" + name + ", setCode=" + setCode
-				+ ", language=" + language + ", imageUri=" + imageUri + "]";
-	}
-
 	/**
 	 * @return the text
 	 */
@@ -233,7 +222,17 @@ public class CardInformation {
 	/**
 	 * @return the collectorNumber
 	 */
-	public int getCollectorNumber() {
+	public String getCollectorNumber() {
 		return collectorNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "CardInformation [uniqueId=" + uniqueId + ", oracleId=" + oracleId + ", name=" + name + ", text=" + text
+				+ ", flavor=" + flavor + ", artist=" + artist + ", collectorNumber=" + collectorNumber + ", setCode="
+				+ setCode + ", language=" + language + ", imageUri=" + imageUri + "]";
 	}
 }

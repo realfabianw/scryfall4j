@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 
 /**
  * This class is the entry-point for all requests to the Scryfall-API.
+ * 
  * @author QUE
  *
  */
@@ -85,11 +86,16 @@ public class Scryfall {
 	public static List<CardInformation> getCardByName(String cardName) throws IOException {
 		List<CardInformation> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		FileWriter fileWriter = new FileWriter(new File("card_" + cardName + ".json"));
+		fileWriter.write(gson.toJson(result));
+		fileWriter.close();
+
 		JsonArray cardArray = result.get("data").getAsJsonArray();
 		for (JsonElement cardElement : cardArray) {
 			listCards.add(new CardInformation(cardElement.getAsJsonObject()));
 		}
-
 		return listCards;
 	}
 
