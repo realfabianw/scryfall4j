@@ -1,17 +1,5 @@
 package de.ics.scryfall;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.imageio.ImageIO;
-
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
-
 import com.google.gson.JsonObject;
 
 /**
@@ -89,32 +77,6 @@ public class SetInformation {
 		return code;
 	}
 
-//	/**
-//	 * Die getIcon()-Funktion wird aus dem Wrapper entfernt.
-//	 * @return the icon
-//	 * @throws IOException
-//	 * @throws TranscoderException
-//	 */
-//	public BufferedImage getIcon(String pathSetDirectory) throws IOException, TranscoderException {
-//		if (icon != null) {
-//			return icon;
-//		} else {
-//			File dir = new File(pathSetDirectory);
-//			if (!dir.exists()) {
-//				dir.mkdirs();
-//			}
-//			File setIcon = new File(pathSetDirectory + code + ".png");
-//			if (!setIcon.exists()) {
-//				saveSVGtoPNG(iconUri, setIcon);
-//				this.icon = ImageIO.read(setIcon);
-//				return icon;
-//			} else {
-//				this.icon = ImageIO.read(setIcon);
-//				return icon;
-//			}
-//		}
-//	}
-
 	/**
 	 * @return the iconUri
 	 */
@@ -140,34 +102,6 @@ public class SetInformation {
 		int result = 1;
 		result = prime * result + ((code == null) ? 0 : code.hashCode());
 		return result;
-	}
-
-	/**
-	 * this method converts a given svg image (by url) to a png image on the disk at
-	 * the given location.
-	 * 
-	 * @author techhunter @ stackoverflow
-	 * @see https://stackoverflow.com/questions/42340833/convert-svg-image-to-png-in-java-by-servlet
-	 * @param svgUri
-	 * @param output
-	 * @throws TranscoderException
-	 * @throws IOException
-	 */
-	private void saveSVGtoPNG(String svgUri, File output) throws TranscoderException, IOException {
-		// Step -1: We read the input SVG document into Transcoder Input
-		// We use Java NIO for this purpose
-		String svg_URI_input = svgUri;
-		TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
-		// Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
-		OutputStream png_ostream = new FileOutputStream(output);
-		TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
-		// Step-3: Create PNGTranscoder and define hints if required
-		PNGTranscoder my_converter = new PNGTranscoder();
-		// Step-4: Convert and Write output
-		my_converter.transcode(input_svg_image, output_png_image);
-		// Step 5- close / flush Output Stream
-		png_ostream.flush();
-		png_ostream.close();
 	}
 
 	/*

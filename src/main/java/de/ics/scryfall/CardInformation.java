@@ -11,8 +11,6 @@ import org.apache.batik.transcoder.TranscoderException;
 
 import com.google.gson.JsonObject;
 
-import de.ics.scryfall.enums.Language;
-
 /**
  * This class combines the most basic information of a card to identify and
  * display it.
@@ -59,7 +57,7 @@ public class CardInformation {
 	/**
 	 * The cards language.
 	 */
-	private final Language language;
+	private final String language;
 	/**
 	 * A link to the cards image.
 	 */
@@ -76,12 +74,12 @@ public class CardInformation {
 		this.artist = jObject.get("artist").getAsString();
 		this.collectorNumber = jObject.get("collector_number").getAsString();
 		this.setCode = jObject.get("set").getAsString();
-		this.language = Language.getLanguage(jObject.get("lang").getAsString());
+		this.language = jObject.get("lang").getAsString();
 		this.imageUri = jObject.get("image_uris").getAsJsonObject().get("large").getAsString();
 	}
 
 	public CardInformation(String uniqueId, String oracleId, String name, String text, String flavor, String artist,
-			String collectorNumber, String setCode, Language language, String imageUri) {
+			String collectorNumber, String setCode, String language, String imageUri) {
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
 		this.name = name;
@@ -144,6 +142,27 @@ public class CardInformation {
 //	}
 
 	/**
+	 * @return the artist
+	 */
+	public String getArtist() {
+		return artist;
+	}
+
+	/**
+	 * @return the collectorNumber
+	 */
+	public String getCollectorNumber() {
+		return collectorNumber;
+	}
+
+	/**
+	 * @return the flavor
+	 */
+	public String getFlavor() {
+		return flavor;
+	}
+
+	/**
 	 * @return the imageUri
 	 */
 	public String getImageUri() {
@@ -153,7 +172,7 @@ public class CardInformation {
 	/**
 	 * @return the language
 	 */
-	public Language getLanguage() {
+	public String getLanguage() {
 		return language;
 	}
 
@@ -179,6 +198,13 @@ public class CardInformation {
 	}
 
 	/**
+	 * @return the text
+	 */
+	public String getText() {
+		return text;
+	}
+
+	/**
 	 * @return the uniqueId
 	 */
 	public String getUniqueId() {
@@ -198,35 +224,9 @@ public class CardInformation {
 		return result;
 	}
 
-	/**
-	 * @return the text
-	 */
-	public String getText() {
-		return text;
-	}
-
-	/**
-	 * @return the flavor
-	 */
-	public String getFlavor() {
-		return flavor;
-	}
-
-	/**
-	 * @return the artist
-	 */
-	public String getArtist() {
-		return artist;
-	}
-
-	/**
-	 * @return the collectorNumber
-	 */
-	public String getCollectorNumber() {
-		return collectorNumber;
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
