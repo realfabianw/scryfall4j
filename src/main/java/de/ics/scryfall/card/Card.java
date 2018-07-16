@@ -44,7 +44,7 @@ public class Card {
 	private final Legality legality;
 	private final boolean reserved;
 	private final boolean foil;
-	private final boolean nonfoil;
+	private final boolean nonFoil;
 	private final boolean oversized;
 	private final boolean reprint;
 	private final String setCode;
@@ -86,7 +86,7 @@ public class Card {
 		this.legality = JsonHelper.parseLegalities(jObject, "legalities");
 		this.reserved = JsonHelper.booleanJsonResponse(jObject, "reserved");
 		this.foil = JsonHelper.booleanJsonResponse(jObject, "foil");
-		this.nonfoil = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
+		this.nonFoil = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
 		this.oversized = JsonHelper.booleanJsonResponse(jObject, "oversized");
 		this.reprint = JsonHelper.booleanJsonResponse(jObject, "reprint");
 		this.setCode = JsonHelper.stringJsonResponse(jObject, "set");
@@ -137,7 +137,7 @@ public class Card {
 		this.legality = listLegalities;
 		this.reserved = reserved;
 		this.foil = foil;
-		this.nonfoil = nonfoil;
+		this.nonFoil = nonfoil;
 		this.oversized = oversized;
 		this.reprint = reprint;
 		this.setCode = setCode;
@@ -262,7 +262,7 @@ public class Card {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (nonfoil != other.nonfoil)
+		if (nonFoil != other.nonFoil)
 			return false;
 		if (oracleId == null) {
 			if (other.oracleId != null)
@@ -583,7 +583,7 @@ public class Card {
 		result = prime * result + ((listRelatedCards == null) ? 0 : listRelatedCards.hashCode());
 		result = prime * result + ((manaCost == null) ? 0 : manaCost.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (nonfoil ? 1231 : 1237);
+		result = prime * result + (nonFoil ? 1231 : 1237);
 		result = prime * result + ((oracleId == null) ? 0 : oracleId.hashCode());
 		result = prime * result + ((oracleText == null) ? 0 : oracleText.hashCode());
 		result = prime * result + (oversized ? 1231 : 1237);
@@ -642,8 +642,8 @@ public class Card {
 	/**
 	 * @return the nonfoil
 	 */
-	public boolean isNonfoil() {
-		return nonfoil;
+	public boolean isNonFoil() {
+		return nonFoil;
 	}
 
 	/**
@@ -688,7 +688,7 @@ public class Card {
 				+ ", power=" + power + ", toughness=" + toughness + ", listColors=" + listColors
 				+ ", listColorIdentities=" + listColorIdentities + ", listCardFaces=" + listCardFaces
 				+ ", listRelatedCards=" + listRelatedCards + ", listLegalities=" + legality + ", reserved=" + reserved
-				+ ", foil=" + foil + ", nonfoil=" + nonfoil + ", oversized=" + oversized + ", reprint=" + reprint
+				+ ", foil=" + foil + ", nonfoil=" + nonFoil + ", oversized=" + oversized + ", reprint=" + reprint
 				+ ", setCode=" + setCode + ", collectorNumber=" + collectorNumber + ", digital=" + digital + ", rarity="
 				+ rarity + ", illustrationId=" + illustrationId + ", watermark=" + watermark + ", flavorText="
 				+ flavorText + ", artist=" + artist + ", frame=" + frame + ", fullArt=" + fullArt + ", borderColor="
