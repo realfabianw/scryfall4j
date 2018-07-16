@@ -1,8 +1,6 @@
 package de.ics.scryfall;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -10,8 +8,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,7 +23,7 @@ import de.ics.scryfall.set.Set;
  *
  */
 public class Scryfall {
-	private static final String URL_API = "https://api.scryfall.com/";
+	private static final String URI_API = "https://api.scryfall.com/";
 	private static final String SETS = "sets/";
 	private static final String CARDS = "cards/";
 	private static final String SEARCH_QUERY = "search?q=";
@@ -41,7 +37,7 @@ public class Scryfall {
 	 * @throws IOException
 	 */
 	private static JsonElement apiConnection(String uri) throws IOException {
-		return getJsonResponse(URL_API + uri);
+		return getJsonResponse(URI_API + uri);
 	}
 
 	/**
@@ -56,7 +52,7 @@ public class Scryfall {
 	 * @throws IOException
 	 */
 	private static JsonElement cardSearchQuery(String searchQuery) throws IOException {
-		return getJsonResponse(URL_API + CARDS + SEARCH_QUERY + URLEncoder.encode(searchQuery, "UTF-8"));
+		return apiConnection(CARDS + SEARCH_QUERY + URLEncoder.encode(searchQuery, "UTF-8"));
 	}
 
 	/**

@@ -1,18 +1,14 @@
 package de.ics.scryfall.card;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import de.ics.scryfall.io.JsonHelper;
-import javafx.util.Pair;
 
 /**
- * This class tries to implement the data-structure for all available
- * MTG-Cardtypes. Currently supported card types:
+ * This class tries to implement the data-structure for all available MTG
+ * card-layouts. Currently supported card types:
  * 
  * @see (normal cards - any language):
  *      https://scryfall.com/card/a25/141?utm_source
@@ -109,67 +105,253 @@ public class Card {
 		this.futureshifted = JsonHelper.booleanJsonResponse(jObject, "futureshifted");
 	}
 
-	/**
-	 * @return the uniqueId
+	public Card(String uniqueId, String oracleId, String name, String printedName, String languageCode,
+			String scryfallUri, String layout, String imageUri, String manaCost, double cmc, String typeLine,
+			String printedTypeLine, String oracleText, String printedText, String power, String toughness,
+			List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
+			List<RelatedCard> listRelatedCards, Legalities listLegalities, boolean reserved, boolean foil,
+			boolean nonfoil, boolean oversized, boolean reprint, String setCode, String collectorNumber,
+			boolean digital, String rarity, String illustrationId, String watermark, String flavorText, String artist,
+			String frame, boolean fullArt, String borderColor, boolean timeshifted, boolean colorshifted,
+			boolean futureshifted) {
+		this.uniqueId = uniqueId;
+		this.oracleId = oracleId;
+		this.name = name;
+		this.printedName = printedName;
+		this.languageCode = languageCode;
+		this.scryfallUri = scryfallUri;
+		this.layout = layout;
+		this.imageUri = imageUri;
+		this.manaCost = manaCost;
+		this.cmc = cmc;
+		this.typeLine = typeLine;
+		this.printedTypeLine = printedTypeLine;
+		this.oracleText = oracleText;
+		this.printedText = printedText;
+		this.power = power;
+		this.toughness = toughness;
+		this.listColors = listColors;
+		this.listColorIdentities = listColorIdentities;
+		this.listCardFaces = listCardFaces;
+		this.listRelatedCards = listRelatedCards;
+		this.listLegalities = listLegalities;
+		this.reserved = reserved;
+		this.foil = foil;
+		this.nonfoil = nonfoil;
+		this.oversized = oversized;
+		this.reprint = reprint;
+		this.setCode = setCode;
+		this.collectorNumber = collectorNumber;
+		this.digital = digital;
+		this.rarity = rarity;
+		this.illustrationId = illustrationId;
+		this.watermark = watermark;
+		this.flavorText = flavorText;
+		this.artist = artist;
+		this.frame = frame;
+		this.fullArt = fullArt;
+		this.borderColor = borderColor;
+		this.timeshifted = timeshifted;
+		this.colorshifted = colorshifted;
+		this.futureshifted = futureshifted;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public String getUniqueId() {
-		return uniqueId;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Card other = (Card) obj;
+		if (artist == null) {
+			if (other.artist != null)
+				return false;
+		} else if (!artist.equals(other.artist))
+			return false;
+		if (borderColor == null) {
+			if (other.borderColor != null)
+				return false;
+		} else if (!borderColor.equals(other.borderColor))
+			return false;
+		if (Double.doubleToLongBits(cmc) != Double.doubleToLongBits(other.cmc))
+			return false;
+		if (collectorNumber == null) {
+			if (other.collectorNumber != null)
+				return false;
+		} else if (!collectorNumber.equals(other.collectorNumber))
+			return false;
+		if (colorshifted != other.colorshifted)
+			return false;
+		if (digital != other.digital)
+			return false;
+		if (flavorText == null) {
+			if (other.flavorText != null)
+				return false;
+		} else if (!flavorText.equals(other.flavorText))
+			return false;
+		if (foil != other.foil)
+			return false;
+		if (frame == null) {
+			if (other.frame != null)
+				return false;
+		} else if (!frame.equals(other.frame))
+			return false;
+		if (fullArt != other.fullArt)
+			return false;
+		if (futureshifted != other.futureshifted)
+			return false;
+		if (illustrationId == null) {
+			if (other.illustrationId != null)
+				return false;
+		} else if (!illustrationId.equals(other.illustrationId))
+			return false;
+		if (imageUri == null) {
+			if (other.imageUri != null)
+				return false;
+		} else if (!imageUri.equals(other.imageUri))
+			return false;
+		if (languageCode == null) {
+			if (other.languageCode != null)
+				return false;
+		} else if (!languageCode.equals(other.languageCode))
+			return false;
+		if (layout == null) {
+			if (other.layout != null)
+				return false;
+		} else if (!layout.equals(other.layout))
+			return false;
+		if (listCardFaces == null) {
+			if (other.listCardFaces != null)
+				return false;
+		} else if (!listCardFaces.equals(other.listCardFaces))
+			return false;
+		if (listColorIdentities == null) {
+			if (other.listColorIdentities != null)
+				return false;
+		} else if (!listColorIdentities.equals(other.listColorIdentities))
+			return false;
+		if (listColors == null) {
+			if (other.listColors != null)
+				return false;
+		} else if (!listColors.equals(other.listColors))
+			return false;
+		if (listLegalities == null) {
+			if (other.listLegalities != null)
+				return false;
+		} else if (!listLegalities.equals(other.listLegalities))
+			return false;
+		if (listRelatedCards == null) {
+			if (other.listRelatedCards != null)
+				return false;
+		} else if (!listRelatedCards.equals(other.listRelatedCards))
+			return false;
+		if (manaCost == null) {
+			if (other.manaCost != null)
+				return false;
+		} else if (!manaCost.equals(other.manaCost))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (nonfoil != other.nonfoil)
+			return false;
+		if (oracleId == null) {
+			if (other.oracleId != null)
+				return false;
+		} else if (!oracleId.equals(other.oracleId))
+			return false;
+		if (oracleText == null) {
+			if (other.oracleText != null)
+				return false;
+		} else if (!oracleText.equals(other.oracleText))
+			return false;
+		if (oversized != other.oversized)
+			return false;
+		if (power == null) {
+			if (other.power != null)
+				return false;
+		} else if (!power.equals(other.power))
+			return false;
+		if (printedName == null) {
+			if (other.printedName != null)
+				return false;
+		} else if (!printedName.equals(other.printedName))
+			return false;
+		if (printedText == null) {
+			if (other.printedText != null)
+				return false;
+		} else if (!printedText.equals(other.printedText))
+			return false;
+		if (printedTypeLine == null) {
+			if (other.printedTypeLine != null)
+				return false;
+		} else if (!printedTypeLine.equals(other.printedTypeLine))
+			return false;
+		if (rarity == null) {
+			if (other.rarity != null)
+				return false;
+		} else if (!rarity.equals(other.rarity))
+			return false;
+		if (reprint != other.reprint)
+			return false;
+		if (reserved != other.reserved)
+			return false;
+		if (scryfallUri == null) {
+			if (other.scryfallUri != null)
+				return false;
+		} else if (!scryfallUri.equals(other.scryfallUri))
+			return false;
+		if (setCode == null) {
+			if (other.setCode != null)
+				return false;
+		} else if (!setCode.equals(other.setCode))
+			return false;
+		if (timeshifted != other.timeshifted)
+			return false;
+		if (toughness == null) {
+			if (other.toughness != null)
+				return false;
+		} else if (!toughness.equals(other.toughness))
+			return false;
+		if (typeLine == null) {
+			if (other.typeLine != null)
+				return false;
+		} else if (!typeLine.equals(other.typeLine))
+			return false;
+		if (uniqueId == null) {
+			if (other.uniqueId != null)
+				return false;
+		} else if (!uniqueId.equals(other.uniqueId))
+			return false;
+		if (watermark == null) {
+			if (other.watermark != null)
+				return false;
+		} else if (!watermark.equals(other.watermark))
+			return false;
+		return true;
 	}
 
 	/**
-	 * @return the oracleId
+	 * @return the artist
 	 */
-	public String getOracleId() {
-		return oracleId;
+	public String getArtist() {
+		return artist;
 	}
 
 	/**
-	 * @return the name
+	 * @return the borderColor
 	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @return the printedName
-	 */
-	public String getPrintedName() {
-		return printedName;
-	}
-
-	/**
-	 * @return the languageCode
-	 */
-	public String getLanguageCode() {
-		return languageCode;
-	}
-
-	/**
-	 * @return the scryfallUri
-	 */
-	public String getScryfallUri() {
-		return scryfallUri;
-	}
-
-	/**
-	 * @return the layout
-	 */
-	public String getLayout() {
-		return layout;
-	}
-
-	/**
-	 * @return the imageUri
-	 */
-	public String getImageUri() {
-		return imageUri;
-	}
-
-	/**
-	 * @return the manaCost
-	 */
-	public String getManaCost() {
-		return manaCost;
+	public String getBorderColor() {
+		return borderColor;
 	}
 
 	/**
@@ -180,59 +362,52 @@ public class Card {
 	}
 
 	/**
-	 * @return the typeLine
+	 * @return the collectorNumber
 	 */
-	public String getTypeLine() {
-		return typeLine;
+	public String getCollectorNumber() {
+		return collectorNumber;
 	}
 
 	/**
-	 * @return the printedTypeLine
+	 * @return the flavorText
 	 */
-	public String getPrintedTypeLine() {
-		return printedTypeLine;
+	public String getFlavorText() {
+		return flavorText;
 	}
 
 	/**
-	 * @return the oracleText
+	 * @return the frame
 	 */
-	public String getOracleText() {
-		return oracleText;
+	public String getFrame() {
+		return frame;
 	}
 
 	/**
-	 * @return the printedText
+	 * @return the illustrationId
 	 */
-	public String getPrintedText() {
-		return printedText;
+	public String getIllustrationId() {
+		return illustrationId;
 	}
 
 	/**
-	 * @return the power
+	 * @return the imageUri
 	 */
-	public String getPower() {
-		return power;
+	public String getImageUri() {
+		return imageUri;
 	}
 
 	/**
-	 * @return the toughness
+	 * @return the languageCode
 	 */
-	public String getToughness() {
-		return toughness;
+	public String getLanguageCode() {
+		return languageCode;
 	}
 
 	/**
-	 * @return the listColors
+	 * @return the layout
 	 */
-	public List<String> getListColors() {
-		return listColors;
-	}
-
-	/**
-	 * @return the listColorIdentities
-	 */
-	public List<String> getListColorIdentities() {
-		return listColorIdentities;
+	public String getLayout() {
+		return layout;
 	}
 
 	/**
@@ -243,6 +418,20 @@ public class Card {
 	}
 
 	/**
+	 * @return the listColorIdentities
+	 */
+	public List<String> getListColorIdentities() {
+		return listColorIdentities;
+	}
+
+	/**
+	 * @return the listColors
+	 */
+	public List<String> getListColors() {
+		return listColors;
+	}
+
+	/**
 	 * @return the listLegalities
 	 */
 	public Legalities getListLegalities() {
@@ -250,10 +439,183 @@ public class Card {
 	}
 
 	/**
-	 * @return the reserved
+	 * @return the listRelatedCards
 	 */
-	public boolean isReserved() {
-		return reserved;
+	public List<RelatedCard> getListRelatedCards() {
+		return listRelatedCards;
+	}
+
+	/**
+	 * @return the manaCost
+	 */
+	public String getManaCost() {
+		return manaCost;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the oracleId
+	 */
+	public String getOracleId() {
+		return oracleId;
+	}
+
+	/**
+	 * @return the oracleText
+	 */
+	public String getOracleText() {
+		return oracleText;
+	}
+
+	/**
+	 * @return the power
+	 */
+	public String getPower() {
+		return power;
+	}
+
+	/**
+	 * @return the printedName
+	 */
+	public String getPrintedName() {
+		return printedName;
+	}
+
+	/**
+	 * @return the printedText
+	 */
+	public String getPrintedText() {
+		return printedText;
+	}
+
+	/**
+	 * @return the printedTypeLine
+	 */
+	public String getPrintedTypeLine() {
+		return printedTypeLine;
+	}
+
+	/**
+	 * @return the rarity
+	 */
+	public String getRarity() {
+		return rarity;
+	}
+
+	/**
+	 * @return the scryfallUri
+	 */
+	public String getScryfallUri() {
+		return scryfallUri;
+	}
+
+	/**
+	 * @return the setCode
+	 */
+	public String getSetCode() {
+		return setCode;
+	}
+
+	/**
+	 * @return the toughness
+	 */
+	public String getToughness() {
+		return toughness;
+	}
+
+	/**
+	 * @return the typeLine
+	 */
+	public String getTypeLine() {
+		return typeLine;
+	}
+
+	/**
+	 * @return the uniqueId
+	 */
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	/**
+	 * @return the watermark
+	 */
+	public String getWatermark() {
+		return watermark;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((artist == null) ? 0 : artist.hashCode());
+		result = prime * result + ((borderColor == null) ? 0 : borderColor.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(cmc);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((collectorNumber == null) ? 0 : collectorNumber.hashCode());
+		result = prime * result + (colorshifted ? 1231 : 1237);
+		result = prime * result + (digital ? 1231 : 1237);
+		result = prime * result + ((flavorText == null) ? 0 : flavorText.hashCode());
+		result = prime * result + (foil ? 1231 : 1237);
+		result = prime * result + ((frame == null) ? 0 : frame.hashCode());
+		result = prime * result + (fullArt ? 1231 : 1237);
+		result = prime * result + (futureshifted ? 1231 : 1237);
+		result = prime * result + ((illustrationId == null) ? 0 : illustrationId.hashCode());
+		result = prime * result + ((imageUri == null) ? 0 : imageUri.hashCode());
+		result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
+		result = prime * result + ((layout == null) ? 0 : layout.hashCode());
+		result = prime * result + ((listCardFaces == null) ? 0 : listCardFaces.hashCode());
+		result = prime * result + ((listColorIdentities == null) ? 0 : listColorIdentities.hashCode());
+		result = prime * result + ((listColors == null) ? 0 : listColors.hashCode());
+		result = prime * result + ((listLegalities == null) ? 0 : listLegalities.hashCode());
+		result = prime * result + ((listRelatedCards == null) ? 0 : listRelatedCards.hashCode());
+		result = prime * result + ((manaCost == null) ? 0 : manaCost.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (nonfoil ? 1231 : 1237);
+		result = prime * result + ((oracleId == null) ? 0 : oracleId.hashCode());
+		result = prime * result + ((oracleText == null) ? 0 : oracleText.hashCode());
+		result = prime * result + (oversized ? 1231 : 1237);
+		result = prime * result + ((power == null) ? 0 : power.hashCode());
+		result = prime * result + ((printedName == null) ? 0 : printedName.hashCode());
+		result = prime * result + ((printedText == null) ? 0 : printedText.hashCode());
+		result = prime * result + ((printedTypeLine == null) ? 0 : printedTypeLine.hashCode());
+		result = prime * result + ((rarity == null) ? 0 : rarity.hashCode());
+		result = prime * result + (reprint ? 1231 : 1237);
+		result = prime * result + (reserved ? 1231 : 1237);
+		result = prime * result + ((scryfallUri == null) ? 0 : scryfallUri.hashCode());
+		result = prime * result + ((setCode == null) ? 0 : setCode.hashCode());
+		result = prime * result + (timeshifted ? 1231 : 1237);
+		result = prime * result + ((toughness == null) ? 0 : toughness.hashCode());
+		result = prime * result + ((typeLine == null) ? 0 : typeLine.hashCode());
+		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
+		result = prime * result + ((watermark == null) ? 0 : watermark.hashCode());
+		return result;
+	}
+
+	/**
+	 * @return the colorshifted
+	 */
+	public boolean isColorshifted() {
+		return colorshifted;
+	}
+
+	/**
+	 * @return the digital
+	 */
+	public boolean isDigital() {
+		return digital;
 	}
 
 	/**
@@ -261,6 +623,20 @@ public class Card {
 	 */
 	public boolean isFoil() {
 		return foil;
+	}
+
+	/**
+	 * @return the fullArt
+	 */
+	public boolean isFullArt() {
+		return fullArt;
+	}
+
+	/**
+	 * @return the futureshifted
+	 */
+	public boolean isFutureshifted() {
+		return futureshifted;
 	}
 
 	/**
@@ -285,80 +661,10 @@ public class Card {
 	}
 
 	/**
-	 * @return the setCode
+	 * @return the reserved
 	 */
-	public String getSetCode() {
-		return setCode;
-	}
-
-	/**
-	 * @return the collectorNumber
-	 */
-	public String getCollectorNumber() {
-		return collectorNumber;
-	}
-
-	/**
-	 * @return the digital
-	 */
-	public boolean isDigital() {
-		return digital;
-	}
-
-	/**
-	 * @return the rarity
-	 */
-	public String getRarity() {
-		return rarity;
-	}
-
-	/**
-	 * @return the illustrationId
-	 */
-	public String getIllustrationId() {
-		return illustrationId;
-	}
-
-	/**
-	 * @return the watermark
-	 */
-	public String getWatermark() {
-		return watermark;
-	}
-
-	/**
-	 * @return the flavorText
-	 */
-	public String getFlavorText() {
-		return flavorText;
-	}
-
-	/**
-	 * @return the artist
-	 */
-	public String getArtist() {
-		return artist;
-	}
-
-	/**
-	 * @return the frame
-	 */
-	public String getFrame() {
-		return frame;
-	}
-
-	/**
-	 * @return the fullArt
-	 */
-	public boolean isFullArt() {
-		return fullArt;
-	}
-
-	/**
-	 * @return the borderColor
-	 */
-	public String getBorderColor() {
-		return borderColor;
+	public boolean isReserved() {
+		return reserved;
 	}
 
 	/**
@@ -368,20 +674,6 @@ public class Card {
 		return timeshifted;
 	}
 
-	/**
-	 * @return the colorshifted
-	 */
-	public boolean isColorshifted() {
-		return colorshifted;
-	}
-
-	/**
-	 * @return the futureshifted
-	 */
-	public boolean isFutureshifted() {
-		return futureshifted;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -389,7 +681,7 @@ public class Card {
 	 */
 	@Override
 	public String toString() {
-		return "CardInformation [uniqueId=" + uniqueId + ", oracleId=" + oracleId + ", name=" + name + ", printedName="
+		return "Card [uniqueId=" + uniqueId + ", oracleId=" + oracleId + ", name=" + name + ", printedName="
 				+ printedName + ", languageCode=" + languageCode + ", scryfallUri=" + scryfallUri + ", layout=" + layout
 				+ ", imageUri=" + imageUri + ", manaCost=" + manaCost + ", cmc=" + cmc + ", typeLine=" + typeLine
 				+ ", printedTypeLine=" + printedTypeLine + ", oracleText=" + oracleText + ", printedText=" + printedText
@@ -402,47 +694,5 @@ public class Card {
 				+ ", flavorText=" + flavorText + ", artist=" + artist + ", frame=" + frame + ", fullArt=" + fullArt
 				+ ", borderColor=" + borderColor + ", timeshifted=" + timeshifted + ", colorshifted=" + colorshifted
 				+ ", futureshifted=" + futureshifted + "]";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Card other = (Card) obj;
-		if (uniqueId == null) {
-			if (other.uniqueId != null)
-				return false;
-		} else if (!uniqueId.equals(other.uniqueId))
-			return false;
-		return true;
-	}
-
-	/**
-	 * @return the listRelatedCards
-	 */
-	public List<RelatedCard> getListRelatedCards() {
-		return listRelatedCards;
 	}
 }

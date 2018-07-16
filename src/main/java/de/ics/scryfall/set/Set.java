@@ -28,12 +28,12 @@ public class Set {
 	private final int cardCount;
 	private final boolean digital;
 	private final boolean foilOnly;
-	
+
 	/**
 	 * A link to the sets icon (svg on server, png on disk)
 	 */
 	private final String iconUri;
-	
+
 	public Set(JsonObject jObject) {
 		this.code = JsonHelper.stringJsonResponse(jObject, "code");
 		this.name = JsonHelper.stringJsonResponse(jObject, "name");
@@ -57,91 +57,9 @@ public class Set {
 		this.iconUri = iconUri;
 	}
 
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @return the scryfallUri
-	 */
-	public String getScryfallUri() {
-		return scryfallUri;
-	}
-
-	/**
-	 * @return the setType
-	 */
-	public String getSetType() {
-		return setType;
-	}
-
-	/**
-	 * @return the cardCount
-	 */
-	public int getCardCount() {
-		return cardCount;
-	}
-
-	/**
-	 * @return the digital
-	 */
-	public boolean isDigital() {
-		return digital;
-	}
-
-	/**
-	 * @return the foilOnly
-	 */
-	public boolean isFoilOnly() {
-		return foilOnly;
-	}
-
-	/**
-	 * @return the iconUri
-	 */
-	public String getIconUri() {
-		return iconUri;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Set [code=" + code + ", name=" + name + ", scryfallUri=" + scryfallUri + ", setType=" + setType
-				+ ", cardCount=" + cardCount + ", digital=" + digital + ", foilOnly=" + foilOnly + ", iconUri="
-				+ iconUri + "]";
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + cardCount;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result + (digital ? 1231 : 1237);
-		result = prime * result + (foilOnly ? 1231 : 1237);
-		result = prime * result + ((iconUri == null) ? 0 : iconUri.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((scryfallUri == null) ? 0 : scryfallUri.hashCode());
-		result = prime * result + ((setType == null) ? 0 : setType.hashCode());
-		return result;
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -185,5 +103,93 @@ public class Set {
 		} else if (!setType.equals(other.setType))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the cardCount
+	 */
+	public int getCardCount() {
+		return cardCount;
+	}
+
+	/**
+	 * @return the code
+	 */
+	public String getCode() {
+		return code;
+	}
+
+	/**
+	 * @return the iconUri
+	 */
+	public String getIconUri() {
+		return iconUri;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @return the scryfallUri
+	 */
+	public String getScryfallUri() {
+		return scryfallUri;
+	}
+
+	/**
+	 * @return the setType
+	 */
+	public String getSetType() {
+		return setType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + cardCount;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + (digital ? 1231 : 1237);
+		result = prime * result + (foilOnly ? 1231 : 1237);
+		result = prime * result + ((iconUri == null) ? 0 : iconUri.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((scryfallUri == null) ? 0 : scryfallUri.hashCode());
+		result = prime * result + ((setType == null) ? 0 : setType.hashCode());
+		return result;
+	}
+
+	/**
+	 * @return the digital
+	 */
+	public boolean isDigital() {
+		return digital;
+	}
+
+	/**
+	 * @return the foilOnly
+	 */
+	public boolean isFoilOnly() {
+		return foilOnly;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Set [code=" + code + ", name=" + name + ", scryfallUri=" + scryfallUri + ", setType=" + setType
+				+ ", cardCount=" + cardCount + ", digital=" + digital + ", foilOnly=" + foilOnly + ", iconUri="
+				+ iconUri + "]";
 	}
 }

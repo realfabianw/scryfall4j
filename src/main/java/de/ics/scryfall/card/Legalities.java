@@ -4,6 +4,12 @@ import com.google.gson.JsonObject;
 
 import de.ics.scryfall.io.JsonHelper;
 
+/**
+ * Bundles all information about a cards legality.
+ * 
+ * @author QUE
+ *
+ */
 public class Legalities {
 	private final boolean standard;
 	private final boolean future;
@@ -50,60 +56,76 @@ public class Legalities {
 		this.brawl = JsonHelper.booleanFromStringJsonResponse(jObject, "brawl", "legal", "not_legal");
 	}
 
-	/**
-	 * @return the standard
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean isStandard() {
-		return standard;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Legalities other = (Legalities) obj;
+		if (brawl != other.brawl)
+			return false;
+		if (commander != other.commander)
+			return false;
+		if (duel != other.duel)
+			return false;
+		if (frontier != other.frontier)
+			return false;
+		if (future != other.future)
+			return false;
+		if (legacy != other.legacy)
+			return false;
+		if (modern != other.modern)
+			return false;
+		if (oneVersusOne != other.oneVersusOne)
+			return false;
+		if (pauper != other.pauper)
+			return false;
+		if (penny != other.penny)
+			return false;
+		if (standard != other.standard)
+			return false;
+		if (vintage != other.vintage)
+			return false;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (brawl ? 1231 : 1237);
+		result = prime * result + (commander ? 1231 : 1237);
+		result = prime * result + (duel ? 1231 : 1237);
+		result = prime * result + (frontier ? 1231 : 1237);
+		result = prime * result + (future ? 1231 : 1237);
+		result = prime * result + (legacy ? 1231 : 1237);
+		result = prime * result + (modern ? 1231 : 1237);
+		result = prime * result + (oneVersusOne ? 1231 : 1237);
+		result = prime * result + (pauper ? 1231 : 1237);
+		result = prime * result + (penny ? 1231 : 1237);
+		result = prime * result + (standard ? 1231 : 1237);
+		result = prime * result + (vintage ? 1231 : 1237);
+		return result;
 	}
 
 	/**
-	 * @return the future
+	 * @return the brawl
 	 */
-	public boolean isFuture() {
-		return future;
-	}
-
-	/**
-	 * @return the frontier
-	 */
-	public boolean isFrontier() {
-		return frontier;
-	}
-
-	/**
-	 * @return the modern
-	 */
-	public boolean isModern() {
-		return modern;
-	}
-
-	/**
-	 * @return the legacy
-	 */
-	public boolean isLegacy() {
-		return legacy;
-	}
-
-	/**
-	 * @return the pauper
-	 */
-	public boolean isPauper() {
-		return pauper;
-	}
-
-	/**
-	 * @return the vintage
-	 */
-	public boolean isVintage() {
-		return vintage;
-	}
-
-	/**
-	 * @return the penny
-	 */
-	public boolean isPenny() {
-		return penny;
+	public boolean isBrawl() {
+		return brawl;
 	}
 
 	/**
@@ -114,13 +136,6 @@ public class Legalities {
 	}
 
 	/**
-	 * @return the oneVersusOne
-	 */
-	public boolean isOneVersusOne() {
-		return oneVersusOne;
-	}
-
-	/**
 	 * @return the duel
 	 */
 	public boolean isDuel() {
@@ -128,10 +143,66 @@ public class Legalities {
 	}
 
 	/**
-	 * @return the brawl
+	 * @return the frontier
 	 */
-	public boolean isBrawl() {
-		return brawl;
+	public boolean isFrontier() {
+		return frontier;
+	}
+
+	/**
+	 * @return the future
+	 */
+	public boolean isFuture() {
+		return future;
+	}
+
+	/**
+	 * @return the legacy
+	 */
+	public boolean isLegacy() {
+		return legacy;
+	}
+
+	/**
+	 * @return the modern
+	 */
+	public boolean isModern() {
+		return modern;
+	}
+
+	/**
+	 * @return the oneVersusOne
+	 */
+	public boolean isOneVersusOne() {
+		return oneVersusOne;
+	}
+
+	/**
+	 * @return the pauper
+	 */
+	public boolean isPauper() {
+		return pauper;
+	}
+
+	/**
+	 * @return the penny
+	 */
+	public boolean isPenny() {
+		return penny;
+	}
+
+	/**
+	 * @return the standard
+	 */
+	public boolean isStandard() {
+		return standard;
+	}
+
+	/**
+	 * @return the vintage
+	 */
+	public boolean isVintage() {
+		return vintage;
 	}
 
 	/*
