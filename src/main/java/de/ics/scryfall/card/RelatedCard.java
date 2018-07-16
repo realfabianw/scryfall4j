@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.ics.scryfall.card;
 
 import com.google.gson.JsonObject;
 

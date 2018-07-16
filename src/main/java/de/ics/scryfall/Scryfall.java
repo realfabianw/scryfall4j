@@ -17,6 +17,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import de.ics.scryfall.card.Card;
+import de.ics.scryfall.set.Set;
+
 /**
  * This class is the entry-point for all requests to the Scryfall-API.
  * 
@@ -62,18 +65,12 @@ public class Scryfall {
 	 * @return {@code List<Set> listSets}
 	 * @throws IOException
 	 */
-	public static List<SetInformation> getAllSets() throws IOException {
-		List<SetInformation> listSets = new ArrayList<>();
+	public static List<Set> getAllSets() throws IOException {
+		List<Set> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS).getAsJsonObject();
-		
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		FileWriter fileWriter = new FileWriter(new File("sets.json"));
-		fileWriter.write(gson.toJson(result));
-		fileWriter.close();
-		
 		JsonArray setArray = result.get("data").getAsJsonArray();
 		for (JsonElement setElement : setArray) {
-			listSets.add(new SetInformation(setElement.getAsJsonObject()));
+			listSets.add(new Set(setElement.getAsJsonObject()));
 		}
 		return listSets;
 	}
@@ -89,18 +86,12 @@ public class Scryfall {
 	 * @return {@code List<Card> listCards}
 	 * @throws IOException
 	 */
-	public static List<CardInformation> getCardByName(String cardName) throws IOException {
-		List<CardInformation> listCards = new ArrayList<>();
+	public static List<Card> getCardByName(String cardName) throws IOException {
+		List<Card> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
-
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		FileWriter fileWriter = new FileWriter(new File("card_" + cardName + ".json"));
-		fileWriter.write(gson.toJson(result));
-		fileWriter.close();
-
 		JsonArray cardArray = result.get("data").getAsJsonArray();
 		for (JsonElement cardElement : cardArray) {
-			listCards.add(new CardInformation(cardElement.getAsJsonObject()));
+			listCards.add(new Card(cardElement.getAsJsonObject()));
 		}
 		return listCards;
 	}

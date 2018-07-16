@@ -1,6 +1,8 @@
-package de.ics.scryfall;
+package de.ics.scryfall.card;
 
 import com.google.gson.JsonObject;
+
+import de.ics.scryfall.io.JsonHelper;
 
 public class Legalities {
 	private final boolean standard;
@@ -34,40 +36,18 @@ public class Legalities {
 	}
 
 	public Legalities(JsonObject jObject) {
-		this.standard = booleanJsonResponse(jObject, "standard", "legal", "not_legal");
-		this.future = booleanJsonResponse(jObject, "future", "legal", "not_legal");
-		this.frontier = booleanJsonResponse(jObject, "frontier", "legal", "not_legal");
-		this.modern = booleanJsonResponse(jObject, "modern", "legal", "not_legal");
-		this.legacy = booleanJsonResponse(jObject, "legacy", "legal", "not_legal");
-		this.pauper = booleanJsonResponse(jObject, "pauper", "legal", "not_legal");
-		this.vintage = booleanJsonResponse(jObject, "vintage", "legal", "not_legal");
-		this.penny = booleanJsonResponse(jObject, "penny", "legal", "not_legal");
-		this.commander = booleanJsonResponse(jObject, "commander", "legal", "not_legal");
-		this.oneVersusOne = booleanJsonResponse(jObject, "1v1", "legal", "not_legal");
-		this.duel = booleanJsonResponse(jObject, "duel", "legal", "not_legal");
-		this.brawl = booleanJsonResponse(jObject, "brawl", "legal", "not_legal");
-	}
-
-	/**
-	 * Class that catches NullPointerExceptions while getting responses from the Json-File.
-	 * @param jObject
-	 * @param fieldName
-	 * @param trueString
-	 * @param falseString
-	 * @return
-	 */
-	private final boolean booleanJsonResponse(JsonObject jObject, String fieldName, String trueString,
-			String falseString) {
-		try {
-			String returnedString = jObject.get(fieldName).getAsString();
-			if (returnedString.equals(trueString)) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (Exception e) {
-			return false;
-		}
+		this.standard = JsonHelper.booleanFromStringJsonResponse(jObject, "standard", "legal", "not_legal");
+		this.future = JsonHelper.booleanFromStringJsonResponse(jObject, "future", "legal", "not_legal");
+		this.frontier = JsonHelper.booleanFromStringJsonResponse(jObject, "frontier", "legal", "not_legal");
+		this.modern = JsonHelper.booleanFromStringJsonResponse(jObject, "modern", "legal", "not_legal");
+		this.legacy = JsonHelper.booleanFromStringJsonResponse(jObject, "legacy", "legal", "not_legal");
+		this.pauper = JsonHelper.booleanFromStringJsonResponse(jObject, "pauper", "legal", "not_legal");
+		this.vintage = JsonHelper.booleanFromStringJsonResponse(jObject, "vintage", "legal", "not_legal");
+		this.penny = JsonHelper.booleanFromStringJsonResponse(jObject, "penny", "legal", "not_legal");
+		this.commander = JsonHelper.booleanFromStringJsonResponse(jObject, "commander", "legal", "not_legal");
+		this.oneVersusOne = JsonHelper.booleanFromStringJsonResponse(jObject, "1v1", "legal", "not_legal");
+		this.duel = JsonHelper.booleanFromStringJsonResponse(jObject, "duel", "legal", "not_legal");
+		this.brawl = JsonHelper.booleanFromStringJsonResponse(jObject, "brawl", "legal", "not_legal");
 	}
 
 	/**
@@ -154,7 +134,9 @@ public class Legalities {
 		return brawl;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

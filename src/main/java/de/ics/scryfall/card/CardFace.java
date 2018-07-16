@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.ics.scryfall.card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import de.ics.scryfall.io.JsonHelper;
 
 public class CardFace {
 	private final String name;
@@ -43,50 +45,21 @@ public class CardFace {
 	}
 	
 	public CardFace(JsonObject jObject) {
-		this.name = stringJsonResponse(jObject, "name");
-		this.printedName = stringJsonResponse(jObject, "printed_name");
-		this.manaCost = stringJsonResponse(jObject, "mana_cost");
-		this.typeLine = stringJsonResponse(jObject, "type_line");
-		this.printedTypeLine = stringJsonResponse(jObject, "printed_type_line");
-		this.oracleText = stringJsonResponse(jObject, "oracle_text");
-		this.printedText = stringJsonResponse(jObject, "printed_text");
-		this.listColors = listStringJsonResponse(jObject, "colors");
-		this.listColorIndicators = listStringJsonResponse(jObject, "color_indicator");
-		this.power = stringJsonResponse(jObject, "power");
-		this.toughness = stringJsonResponse(jObject, "toughness");
-		this.flavorText = stringJsonResponse(jObject, "flavor_text");
-		this.illustrationId = stringJsonResponse(jObject, "illustration_id");
-		this.imageUri = largeImageJsonResponse(jObject, "image_uris");
+		this.name = JsonHelper.stringJsonResponse(jObject, "name");
+		this.printedName = JsonHelper.stringJsonResponse(jObject, "printed_name");
+		this.manaCost = JsonHelper.stringJsonResponse(jObject, "mana_cost");
+		this.typeLine = JsonHelper.stringJsonResponse(jObject, "type_line");
+		this.printedTypeLine = JsonHelper.stringJsonResponse(jObject, "printed_type_line");
+		this.oracleText = JsonHelper.stringJsonResponse(jObject, "oracle_text");
+		this.printedText = JsonHelper.stringJsonResponse(jObject, "printed_text");
+		this.listColors = JsonHelper.listStringJsonResponse(jObject, "colors");
+		this.listColorIndicators = JsonHelper.listStringJsonResponse(jObject, "color_indicator");
+		this.power = JsonHelper.stringJsonResponse(jObject, "power");
+		this.toughness = JsonHelper.stringJsonResponse(jObject, "toughness");
+		this.flavorText = JsonHelper.stringJsonResponse(jObject, "flavor_text");
+		this.illustrationId = JsonHelper.stringJsonResponse(jObject, "illustration_id");
+		this.imageUri = JsonHelper.largeImageJsonResponse(jObject, "image_uris");
 
-	}
-
-	private final String stringJsonResponse(JsonObject jObject, String fieldName) {
-		try {
-			return jObject.get(fieldName).getAsString();
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	private final List<String> listStringJsonResponse(JsonObject jObject, String arrayName) {
-		List<String> listString = new ArrayList<>();
-		try {
-			JsonArray jArray = jObject.get("colors").getAsJsonArray();
-			for (JsonElement jElement : jArray) {
-				listString.add(jElement.getAsJsonObject().getAsString());
-			}
-			return listString;
-		} catch (Exception e) {
-			return new ArrayList<String>();
-		}
-	}
-
-	private final String largeImageJsonResponse(JsonObject jObject, String childObject) {
-		try {
-			return jObject.get(childObject).getAsJsonObject().get("large").getAsString();
-		} catch (Exception e) {
-			return "";
-		}
 	}
 
 	/**

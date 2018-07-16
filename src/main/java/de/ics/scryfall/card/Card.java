@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.ics.scryfall.card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import de.ics.scryfall.io.JsonHelper;
 import javafx.util.Pair;
 
 /**
@@ -23,7 +24,7 @@ import javafx.util.Pair;
  * @author QUE
  *
  */
-public class CardInformation {
+public class Card {
 	private final String uniqueId;
 	private final String oracleId;
 	private final String name;
@@ -65,138 +66,47 @@ public class CardInformation {
 	private final boolean colorshifted;
 	private final boolean futureshifted;
 
-	public CardInformation(JsonObject jObject) {
-		this.uniqueId = stringJsonResponse(jObject, "id");
-		this.oracleId = stringJsonResponse(jObject, "oracle_id");
-		this.name = stringJsonResponse(jObject, "name");
-		this.printedName = stringJsonResponse(jObject, "printed_name");
-		this.languageCode = stringJsonResponse(jObject, "lang");
-		this.scryfallUri = stringJsonResponse(jObject, "scryfall_uri");
-		this.layout = stringJsonResponse(jObject, "layout");
-		this.imageUri = largeImageJsonResponse(jObject, "image_uris");
-		this.manaCost = stringJsonResponse(jObject, "mana_cost");
-		this.cmc = doubleJsonResponse(jObject, "cmc");
-		this.typeLine = stringJsonResponse(jObject, "type_line");
-		this.printedTypeLine = stringJsonResponse(jObject, "printed_type_line");
-		this.oracleText = stringJsonResponse(jObject, "oracle_text");
-		this.printedText = stringJsonResponse(jObject, "printed_text");
-		this.power = stringJsonResponse(jObject, "power");
-		this.toughness = stringJsonResponse(jObject, "toughness");
-		this.listColors = listStringJsonResponse(jObject, "colors");
-		this.listColorIdentities = listStringJsonResponse(jObject, "color_identity");
-		this.listCardFaces = parseListCardFaces(jObject, "card_faces");
-		this.listRelatedCards = parseListRelatedCards(jObject, "all_parts");
-		this.listLegalities = parseLegalities(jObject, "legalities");
-		this.reserved = booleanJsonResponse(jObject, "reserved");
-		this.foil = booleanJsonResponse(jObject, "foil");
-		this.nonfoil = booleanJsonResponse(jObject, "nonfoil");
-		this.oversized = booleanJsonResponse(jObject, "oversized");
-		this.reprint = booleanJsonResponse(jObject, "reprint");
-		this.setCode = stringJsonResponse(jObject, "set");
-		this.collectorNumber = stringJsonResponse(jObject, "collector_number");
-		this.digital = booleanJsonResponse(jObject, "digital");
-		this.rarity = stringJsonResponse(jObject, "rarity");
-		this.illustrationId = stringJsonResponse(jObject, "illustration_id");
-		this.watermark = stringJsonResponse(jObject, "watermark");
-		this.flavorText = stringJsonResponse(jObject, "flavor_text");
-		this.artist = stringJsonResponse(jObject, "artist");
-		this.frame = stringJsonResponse(jObject, "frame");
-		this.fullArt = booleanJsonResponse(jObject, "full_art");
-		this.borderColor = stringJsonResponse(jObject, "border_color");
-		this.timeshifted = booleanJsonResponse(jObject, "timeshifted");
-		this.colorshifted = booleanJsonResponse(jObject, "colorshifted");
-		this.futureshifted = booleanJsonResponse(jObject, "futureshifted");
-	}
-
-	private final List<CardFace> parseListCardFaces(JsonObject jObject, String arrayName) {
-		try {
-			List<CardFace> listCardFaces = new ArrayList<>();
-			JsonArray jArray = jObject.get(arrayName).getAsJsonArray();
-			for (JsonElement jElement : jArray) {
-				JsonObject jCardFace = jElement.getAsJsonObject();
-				listCardFaces.add(new CardFace(jCardFace));
-			}
-			return listCardFaces;
-		} catch (Exception e) {
-			return new ArrayList<CardFace>();
-		}
-	}
-
-	private final List<RelatedCard> parseListRelatedCards(JsonObject jObject, String arrayName) {
-		try {
-			List<RelatedCard> listRelatedCards = new ArrayList<>();
-			JsonArray jArray = jObject.get(arrayName).getAsJsonArray();
-			for (JsonElement jElement : jArray) {
-				JsonObject jRelatedCard = jElement.getAsJsonObject();
-				listRelatedCards.add(new RelatedCard(jRelatedCard));
-			}
-			return listRelatedCards;
-		} catch (Exception e) {
-			return new ArrayList<RelatedCard>();
-		}
-	}
-
-	private final Legalities parseLegalities(JsonObject jObject, String fieldName) {
-		try {
-			return new Legalities(jObject.get(fieldName).getAsJsonObject());
-		} catch (Exception e) {
-			return new Legalities(false, false, false, false, false, false, false, false, false, false, false, false);
-		}
-	}
-
-	/**
-	 * Class that catches NullPointerExceptions while getting responses from the
-	 * Json-File.
-	 * 
-	 * @param jObject
-	 * @param fieldName
-	 * @param trueString
-	 * @param falseString
-	 * @return
-	 */
-	private final boolean booleanJsonResponse(JsonObject jObject, String fieldName) {
-		try {
-			return jObject.get(fieldName).getAsBoolean();
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private final String stringJsonResponse(JsonObject jObject, String fieldName) {
-		try {
-			return jObject.get(fieldName).getAsString();
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	private final double doubleJsonResponse(JsonObject jObject, String fieldName) {
-		try {
-			return jObject.get(fieldName).getAsDouble();
-		} catch (Exception e) {
-			return 0;
-		}
-	}
-
-	private final String largeImageJsonResponse(JsonObject jObject, String childObject) {
-		try {
-			return jObject.get(childObject).getAsJsonObject().get("large").getAsString();
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	private final List<String> listStringJsonResponse(JsonObject jObject, String arrayName) {
-		List<String> listString = new ArrayList<>();
-		try {
-			JsonArray jArray = jObject.get("colors").getAsJsonArray();
-			for (JsonElement jElement : jArray) {
-				listString.add(jElement.getAsString());
-			}
-			return listString;
-		} catch (Exception e) {
-			return new ArrayList<String>();
-		}
+	public Card(JsonObject jObject) {
+		this.uniqueId = JsonHelper.stringJsonResponse(jObject, "id");
+		this.oracleId = JsonHelper.stringJsonResponse(jObject, "oracle_id");
+		this.name = JsonHelper.stringJsonResponse(jObject, "name");
+		this.printedName = JsonHelper.stringJsonResponse(jObject, "printed_name");
+		this.languageCode = JsonHelper.stringJsonResponse(jObject, "lang");
+		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
+		this.layout = JsonHelper.stringJsonResponse(jObject, "layout");
+		this.imageUri = JsonHelper.largeImageJsonResponse(jObject, "image_uris");
+		this.manaCost = JsonHelper.stringJsonResponse(jObject, "mana_cost");
+		this.cmc = JsonHelper.doubleJsonResponse(jObject, "cmc");
+		this.typeLine = JsonHelper.stringJsonResponse(jObject, "type_line");
+		this.printedTypeLine = JsonHelper.stringJsonResponse(jObject, "printed_type_line");
+		this.oracleText = JsonHelper.stringJsonResponse(jObject, "oracle_text");
+		this.printedText = JsonHelper.stringJsonResponse(jObject, "printed_text");
+		this.power = JsonHelper.stringJsonResponse(jObject, "power");
+		this.toughness = JsonHelper.stringJsonResponse(jObject, "toughness");
+		this.listColors = JsonHelper.listStringJsonResponse(jObject, "colors");
+		this.listColorIdentities = JsonHelper.listStringJsonResponse(jObject, "color_identity");
+		this.listCardFaces = JsonHelper.parseListCardFaces(jObject, "card_faces");
+		this.listRelatedCards = JsonHelper.parseListRelatedCards(jObject, "all_parts");
+		this.listLegalities = JsonHelper.parseLegalities(jObject, "legalities");
+		this.reserved = JsonHelper.booleanJsonResponse(jObject, "reserved");
+		this.foil = JsonHelper.booleanJsonResponse(jObject, "foil");
+		this.nonfoil = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
+		this.oversized = JsonHelper.booleanJsonResponse(jObject, "oversized");
+		this.reprint = JsonHelper.booleanJsonResponse(jObject, "reprint");
+		this.setCode = JsonHelper.stringJsonResponse(jObject, "set");
+		this.collectorNumber = JsonHelper.stringJsonResponse(jObject, "collector_number");
+		this.digital = JsonHelper.booleanJsonResponse(jObject, "digital");
+		this.rarity = JsonHelper.stringJsonResponse(jObject, "rarity");
+		this.illustrationId = JsonHelper.stringJsonResponse(jObject, "illustration_id");
+		this.watermark = JsonHelper.stringJsonResponse(jObject, "watermark");
+		this.flavorText = JsonHelper.stringJsonResponse(jObject, "flavor_text");
+		this.artist = JsonHelper.stringJsonResponse(jObject, "artist");
+		this.frame = JsonHelper.stringJsonResponse(jObject, "frame");
+		this.fullArt = JsonHelper.booleanJsonResponse(jObject, "full_art");
+		this.borderColor = JsonHelper.stringJsonResponse(jObject, "border_color");
+		this.timeshifted = JsonHelper.booleanJsonResponse(jObject, "timeshifted");
+		this.colorshifted = JsonHelper.booleanJsonResponse(jObject, "colorshifted");
+		this.futureshifted = JsonHelper.booleanJsonResponse(jObject, "futureshifted");
 	}
 
 	/**
@@ -520,7 +430,7 @@ public class CardInformation {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CardInformation other = (CardInformation) obj;
+		Card other = (Card) obj;
 		if (uniqueId == null) {
 			if (other.uniqueId != null)
 				return false;
