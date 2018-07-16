@@ -65,6 +65,12 @@ public class Scryfall {
 	public static List<SetInformation> getAllSets() throws IOException {
 		List<SetInformation> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS).getAsJsonObject();
+		
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		FileWriter fileWriter = new FileWriter(new File("sets.json"));
+		fileWriter.write(gson.toJson(result));
+		fileWriter.close();
+		
 		JsonArray setArray = result.get("data").getAsJsonArray();
 		for (JsonElement setElement : setArray) {
 			listSets.add(new SetInformation(setElement.getAsJsonObject()));

@@ -7,16 +7,20 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
-
-		List<CardInformation> listCards = new ArrayList<>();
-
-		listCards.addAll(Scryfall.getCardByName("Lightning Bolt"));
-		listCards.addAll(Scryfall.getCardByName("Erratic Mutation"));
-		listCards.addAll(Scryfall.getCardByName("Lore Weaver"));
-		listCards.addAll(Scryfall.getCardByName("Brine Elemental"));
-
-		System.out.println(listCards);
+		//Scryfall.getAllSets();
+		List<CardInformation> listFullCardInformation = new ArrayList<>();
+		listFullCardInformation.addAll(Scryfall.getCardByName("Lightning Bolt"));
+		listFullCardInformation.addAll(Scryfall.getCardByName("Kugelblitz"));
+		listFullCardInformation.addAll(Scryfall.getCardByName("Bushi Tenderfoot"));
+		listFullCardInformation.addAll(Scryfall.getCardByName("Odds"));
+		listFullCardInformation.addAll(Scryfall.getCardByName("Seelenschnapper"));
+		
+		listFullCardInformation.addAll(Scryfall.getCardByName("Chittering Host"));
+		listFullCardInformation.addAll(Scryfall.getCardByName("Ratos do Cemitério"));
+		
+		for (CardInformation card : listFullCardInformation) {
+			System.out.println(card.toString());
+		}
 	}
 
 }
