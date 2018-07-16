@@ -41,7 +41,7 @@ public class Card {
 	private final List<String> listColorIdentities;
 	private final List<CardFace> listCardFaces;
 	private final List<RelatedCard> listRelatedCards;
-	private final Legalities listLegalities;
+	private final Legality legality;
 	private final boolean reserved;
 	private final boolean foil;
 	private final boolean nonfoil;
@@ -83,7 +83,7 @@ public class Card {
 		this.listColorIdentities = JsonHelper.listStringJsonResponse(jObject, "color_identity");
 		this.listCardFaces = JsonHelper.parseListCardFaces(jObject, "card_faces");
 		this.listRelatedCards = JsonHelper.parseListRelatedCards(jObject, "all_parts");
-		this.listLegalities = JsonHelper.parseLegalities(jObject, "legalities");
+		this.legality = JsonHelper.parseLegalities(jObject, "legalities");
 		this.reserved = JsonHelper.booleanJsonResponse(jObject, "reserved");
 		this.foil = JsonHelper.booleanJsonResponse(jObject, "foil");
 		this.nonfoil = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
@@ -109,7 +109,7 @@ public class Card {
 			String scryfallUri, String layout, String imageUri, String manaCost, double cmc, String typeLine,
 			String printedTypeLine, String oracleText, String printedText, String power, String toughness,
 			List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
-			List<RelatedCard> listRelatedCards, Legalities listLegalities, boolean reserved, boolean foil,
+			List<RelatedCard> listRelatedCards, Legality listLegalities, boolean reserved, boolean foil,
 			boolean nonfoil, boolean oversized, boolean reprint, String setCode, String collectorNumber,
 			boolean digital, String rarity, String illustrationId, String watermark, String flavorText, String artist,
 			String frame, boolean fullArt, String borderColor, boolean timeshifted, boolean colorshifted,
@@ -134,7 +134,7 @@ public class Card {
 		this.listColorIdentities = listColorIdentities;
 		this.listCardFaces = listCardFaces;
 		this.listRelatedCards = listRelatedCards;
-		this.listLegalities = listLegalities;
+		this.legality = listLegalities;
 		this.reserved = reserved;
 		this.foil = foil;
 		this.nonfoil = nonfoil;
@@ -242,10 +242,10 @@ public class Card {
 				return false;
 		} else if (!listColors.equals(other.listColors))
 			return false;
-		if (listLegalities == null) {
-			if (other.listLegalities != null)
+		if (legality == null) {
+			if (other.legality != null)
 				return false;
-		} else if (!listLegalities.equals(other.listLegalities))
+		} else if (!legality.equals(other.legality))
 			return false;
 		if (listRelatedCards == null) {
 			if (other.listRelatedCards != null)
@@ -434,8 +434,8 @@ public class Card {
 	/**
 	 * @return the listLegalities
 	 */
-	public Legalities getListLegalities() {
-		return listLegalities;
+	public Legality getLegality() {
+		return legality;
 	}
 
 	/**
@@ -579,7 +579,7 @@ public class Card {
 		result = prime * result + ((listCardFaces == null) ? 0 : listCardFaces.hashCode());
 		result = prime * result + ((listColorIdentities == null) ? 0 : listColorIdentities.hashCode());
 		result = prime * result + ((listColors == null) ? 0 : listColors.hashCode());
-		result = prime * result + ((listLegalities == null) ? 0 : listLegalities.hashCode());
+		result = prime * result + ((legality == null) ? 0 : legality.hashCode());
 		result = prime * result + ((listRelatedCards == null) ? 0 : listRelatedCards.hashCode());
 		result = prime * result + ((manaCost == null) ? 0 : manaCost.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -687,12 +687,12 @@ public class Card {
 				+ ", printedTypeLine=" + printedTypeLine + ", oracleText=" + oracleText + ", printedText=" + printedText
 				+ ", power=" + power + ", toughness=" + toughness + ", listColors=" + listColors
 				+ ", listColorIdentities=" + listColorIdentities + ", listCardFaces=" + listCardFaces
-				+ ", listRelatedCards=" + listRelatedCards + ", listLegalities=" + listLegalities + ", reserved="
-				+ reserved + ", foil=" + foil + ", nonfoil=" + nonfoil + ", oversized=" + oversized + ", reprint="
-				+ reprint + ", setCode=" + setCode + ", collectorNumber=" + collectorNumber + ", digital=" + digital
-				+ ", rarity=" + rarity + ", illustrationId=" + illustrationId + ", watermark=" + watermark
-				+ ", flavorText=" + flavorText + ", artist=" + artist + ", frame=" + frame + ", fullArt=" + fullArt
-				+ ", borderColor=" + borderColor + ", timeshifted=" + timeshifted + ", colorshifted=" + colorshifted
-				+ ", futureshifted=" + futureshifted + "]";
+				+ ", listRelatedCards=" + listRelatedCards + ", listLegalities=" + legality + ", reserved=" + reserved
+				+ ", foil=" + foil + ", nonfoil=" + nonfoil + ", oversized=" + oversized + ", reprint=" + reprint
+				+ ", setCode=" + setCode + ", collectorNumber=" + collectorNumber + ", digital=" + digital + ", rarity="
+				+ rarity + ", illustrationId=" + illustrationId + ", watermark=" + watermark + ", flavorText="
+				+ flavorText + ", artist=" + artist + ", frame=" + frame + ", fullArt=" + fullArt + ", borderColor="
+				+ borderColor + ", timeshifted=" + timeshifted + ", colorshifted=" + colorshifted + ", futureshifted="
+				+ futureshifted + "]";
 	}
 }

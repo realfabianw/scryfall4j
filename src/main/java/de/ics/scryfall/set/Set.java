@@ -5,33 +5,19 @@ import com.google.gson.JsonObject;
 import de.ics.scryfall.io.JsonHelper;
 
 /**
- * This class combines the most basic information of a set to identify and
- * display it.
+ * This class combines all information of a set to identify and display it.
  * 
  * @author QUE
  *
  */
 public class Set {
-	/**
-	 * The sets unique code.
-	 */
 	private final String code;
-	/**
-	 * The sets name.
-	 */
 	private final String name;
 	private final String scryfallUri;
 	private final String setType;
-	/**
-	 * The sets card count.
-	 */
 	private final int cardCount;
 	private final boolean digital;
 	private final boolean foilOnly;
-
-	/**
-	 * A link to the sets icon (svg on server, png on disk)
-	 */
 	private final String iconUri;
 
 	public Set(JsonObject jObject) {

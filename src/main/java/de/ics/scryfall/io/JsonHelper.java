@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import de.ics.scryfall.card.CardFace;
-import de.ics.scryfall.card.Legalities;
+import de.ics.scryfall.card.Legality;
 import de.ics.scryfall.card.RelatedCard;
 
 public class JsonHelper {
@@ -81,11 +81,11 @@ public class JsonHelper {
 		}
 	}
 
-	public static Legalities parseLegalities(JsonObject jObject, String fieldName) {
+	public static Legality parseLegalities(JsonObject jObject, String fieldName) {
 		try {
-			return new Legalities(jObject.get(fieldName).getAsJsonObject());
+			return new Legality(jObject.get(fieldName).getAsJsonObject());
 		} catch (Exception e) {
-			return new Legalities(false, false, false, false, false, false, false, false, false, false, false, false);
+			return new Legality(false, false, false, false, false, false, false, false, false, false, false, false);
 		}
 	}
 

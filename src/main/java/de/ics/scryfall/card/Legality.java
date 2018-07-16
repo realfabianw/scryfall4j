@@ -10,7 +10,7 @@ import de.ics.scryfall.io.JsonHelper;
  * @author QUE
  *
  */
-public class Legalities {
+public class Legality {
 	private final boolean standard;
 	private final boolean future;
 	private final boolean frontier;
@@ -24,9 +24,8 @@ public class Legalities {
 	private final boolean duel;
 	private final boolean brawl;
 
-	public Legalities(boolean standard, boolean future, boolean frontier, boolean modern, boolean legacy,
-			boolean pauper, boolean vintage, boolean penny, boolean commander, boolean oneVersusOne, boolean duel,
-			boolean brawl) {
+	public Legality(boolean standard, boolean future, boolean frontier, boolean modern, boolean legacy, boolean pauper,
+			boolean vintage, boolean penny, boolean commander, boolean oneVersusOne, boolean duel, boolean brawl) {
 		this.standard = standard;
 		this.future = future;
 		this.frontier = frontier;
@@ -41,7 +40,7 @@ public class Legalities {
 		this.brawl = brawl;
 	}
 
-	public Legalities(JsonObject jObject) {
+	public Legality(JsonObject jObject) {
 		this.standard = JsonHelper.booleanFromStringJsonResponse(jObject, "standard", "legal", "not_legal");
 		this.future = JsonHelper.booleanFromStringJsonResponse(jObject, "future", "legal", "not_legal");
 		this.frontier = JsonHelper.booleanFromStringJsonResponse(jObject, "frontier", "legal", "not_legal");
@@ -69,7 +68,7 @@ public class Legalities {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Legalities other = (Legalities) obj;
+		Legality other = (Legality) obj;
 		if (brawl != other.brawl)
 			return false;
 		if (commander != other.commander)

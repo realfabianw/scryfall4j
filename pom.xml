@@ -68,5 +68,5 @@
 	</build>
 	<name>scryfall4j</name>
 	<artifactId>scryfall4j</artifactId>
-	<version>1.4.0</version>
+	<version>1.4.1</version>
 </project>
