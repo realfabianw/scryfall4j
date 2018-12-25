@@ -1,5 +1,8 @@
 package de.ics.scryfall.io;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,11 +10,26 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import de.ics.scryfall.card.CardFace;
-import de.ics.scryfall.card.Legality;
-import de.ics.scryfall.card.RelatedCard;
+import de.ics.scryfall.mtg.card.CardFace;
+import de.ics.scryfall.mtg.card.Legality;
+import de.ics.scryfall.mtg.card.RelatedCard;
 
+/**
+ * Class that catches NullPointerExceptions while getting responses from the
+ * Json-File.
+ * 
+ * @author QUE
+ *
+ */
 public class JsonHelper {
+	public static BigDecimal bigDecimalJsonResponse(JsonObject jObject, String fieldName) {
+		try {
+			return jObject.get(fieldName).getAsBigDecimal();
+		} catch (Exception e) {
+			return BigDecimal.ZERO;
+		}
+	}
+
 	public static boolean booleanFromStringJsonResponse(JsonObject jObject, String fieldName, String trueString,
 			String falseString) {
 		try {
@@ -26,16 +44,6 @@ public class JsonHelper {
 		}
 	}
 
-	/**
-	 * Class that catches NullPointerExceptions while getting responses from the
-	 * Json-File.
-	 * 
-	 * @param jObject
-	 * @param fieldName
-	 * @param trueString
-	 * @param falseString
-	 * @return
-	 */
 	public static boolean booleanJsonResponse(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsBoolean();
@@ -78,6 +86,14 @@ public class JsonHelper {
 			return listString;
 		} catch (Exception e) {
 			return new ArrayList<String>();
+		}
+	}
+
+	public static LocalDateTime LocalDateTimeJsonResponse(JsonObject jObject, String fieldName, DateTimeFormatter dtf) {
+		try {
+			return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
+		} catch (Exception e) {
+			return LocalDateTime.now();
 		}
 	}
 

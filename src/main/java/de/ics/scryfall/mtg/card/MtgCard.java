@@ -1,6 +1,11 @@
-package de.ics.scryfall.card;
+package de.ics.scryfall.mtg.card;
 
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gson.JsonObject;
 
@@ -20,7 +25,7 @@ import de.ics.scryfall.io.JsonHelper;
  * @author QUE
  *
  */
-public class Card {
+public class MtgCard {
 	private final String uniqueId;
 	private final String oracleId;
 	private final String name;
@@ -61,8 +66,13 @@ public class Card {
 	private final boolean timeshifted;
 	private final boolean colorshifted;
 	private final boolean futureshifted;
+	private final int edhrecRank;
+	private final BigDecimal priceUsd;
+	private final BigDecimal priceEur;
+	private final BigDecimal priceTix;
+	private final Set<Link> setLinks;
 
-	public Card(JsonObject jObject) {
+	public MtgCard(JsonObject jObject) {
 		this.uniqueId = JsonHelper.stringJsonResponse(jObject, "id");
 		this.oracleId = JsonHelper.stringJsonResponse(jObject, "oracle_id");
 		this.name = JsonHelper.stringJsonResponse(jObject, "name");
@@ -103,9 +113,28 @@ public class Card {
 		this.timeshifted = JsonHelper.booleanJsonResponse(jObject, "timeshifted");
 		this.colorshifted = JsonHelper.booleanJsonResponse(jObject, "colorshifted");
 		this.futureshifted = JsonHelper.booleanJsonResponse(jObject, "futureshifted");
+		this.edhrecRank = JsonHelper.integerJsonResponse(jObject, "edhrec_rank");
+		this.priceUsd = JsonHelper.bigDecimalJsonResponse(jObject, "usd");
+		this.priceEur = JsonHelper.bigDecimalJsonResponse(jObject, "eur");
+		this.priceTix = JsonHelper.bigDecimalJsonResponse(jObject, "tix");
+		this.setLinks = new HashSet<>();
+		this.setLinks.add(new Link("Gatherer",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "gatherer")));
+		this.setLinks.add(new Link("TCGPlayer Decks",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "tcgplayer_decks")));
+		this.setLinks.add(new Link("EDHREC",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "edhrec")));
+		this.setLinks.add(new Link("MTGTOP8",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "mtgtop8")));
+		this.setLinks.add(new Link("TCGPlayer",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "tcgplayer")));
+		this.setLinks.add(new Link("Cardmarket",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "cardmarket")));
+		this.setLinks.add(new Link("Cardhoarder",
+				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "cardhoarder")));
 	}
 
-	public Card(String uniqueId, String oracleId, String name, String printedName, String languageCode,
+	public MtgCard(String uniqueId, String oracleId, String name, String printedName, String languageCode,
 			String scryfallUri, String layout, String imageUri, String manaCost, double cmc, String typeLine,
 			String printedTypeLine, String oracleText, String printedText, String power, String toughness,
 			List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
@@ -113,7 +142,8 @@ public class Card {
 			boolean nonfoil, boolean oversized, boolean reprint, String setCode, String collectorNumber,
 			boolean digital, String rarity, String illustrationId, String watermark, String flavorText, String artist,
 			String frame, boolean fullArt, String borderColor, boolean timeshifted, boolean colorshifted,
-			boolean futureshifted) {
+			boolean futureshifted, int edhrecRank, BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix,
+			Set<Link> links) {
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
 		this.name = name;
@@ -154,6 +184,11 @@ public class Card {
 		this.timeshifted = timeshifted;
 		this.colorshifted = colorshifted;
 		this.futureshifted = futureshifted;
+		this.edhrecRank = edhrecRank;
+		this.priceUsd = priceUsd;
+		this.priceEur = priceEur;
+		this.priceTix = priceTix;
+		this.setLinks = links;
 	}
 
 	/*
@@ -169,7 +204,7 @@ public class Card {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Card other = (Card) obj;
+		MtgCard other = (MtgCard) obj;
 		if (artist == null) {
 			if (other.artist != null)
 				return false;
@@ -368,6 +403,10 @@ public class Card {
 		return collectorNumber;
 	}
 
+	public int getEdhrecRank() {
+		return edhrecRank;
+	}
+
 	/**
 	 * @return the flavorText
 	 */
@@ -411,6 +450,13 @@ public class Card {
 	}
 
 	/**
+	 * @return the listLegalities
+	 */
+	public Legality getLegality() {
+		return legality;
+	}
+
+	/**
 	 * @return the listCardFaces
 	 */
 	public List<CardFace> getListCardFaces() {
@@ -429,13 +475,6 @@ public class Card {
 	 */
 	public List<String> getListColors() {
 		return listColors;
-	}
-
-	/**
-	 * @return the listLegalities
-	 */
-	public Legality getLegality() {
-		return legality;
 	}
 
 	/**
@@ -480,6 +519,18 @@ public class Card {
 		return power;
 	}
 
+	public BigDecimal getPriceEur() {
+		return priceEur;
+	}
+
+	public BigDecimal getPriceTix() {
+		return priceTix;
+	}
+
+	public BigDecimal getPriceUsd() {
+		return priceUsd;
+	}
+
 	/**
 	 * @return the printedName
 	 */
@@ -520,6 +571,10 @@ public class Card {
 	 */
 	public String getSetCode() {
 		return setCode;
+	}
+
+	public Set<Link> getSetLinks() {
+		return setLinks;
 	}
 
 	/**
@@ -674,25 +729,55 @@ public class Card {
 		return timeshifted;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "Card [uniqueId=" + uniqueId + ", oracleId=" + oracleId + ", name=" + name + ", printedName="
-				+ printedName + ", languageCode=" + languageCode + ", scryfallUri=" + scryfallUri + ", layout=" + layout
-				+ ", imageUri=" + imageUri + ", manaCost=" + manaCost + ", cmc=" + cmc + ", typeLine=" + typeLine
-				+ ", printedTypeLine=" + printedTypeLine + ", oracleText=" + oracleText + ", printedText=" + printedText
-				+ ", power=" + power + ", toughness=" + toughness + ", listColors=" + listColors
-				+ ", listColorIdentities=" + listColorIdentities + ", listCardFaces=" + listCardFaces
-				+ ", listRelatedCards=" + listRelatedCards + ", listLegalities=" + legality + ", reserved=" + reserved
-				+ ", foil=" + foil + ", nonfoil=" + nonFoil + ", oversized=" + oversized + ", reprint=" + reprint
-				+ ", setCode=" + setCode + ", collectorNumber=" + collectorNumber + ", digital=" + digital + ", rarity="
-				+ rarity + ", illustrationId=" + illustrationId + ", watermark=" + watermark + ", flavorText="
-				+ flavorText + ", artist=" + artist + ", frame=" + frame + ", fullArt=" + fullArt + ", borderColor="
-				+ borderColor + ", timeshifted=" + timeshifted + ", colorshifted=" + colorshifted + ", futureshifted="
-				+ futureshifted + "]";
+		final int maxLen = 10;
+		return "Card [" + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
+				+ (oracleId != null ? "oracleId=" + oracleId + ", " : "") + (name != null ? "name=" + name + ", " : "")
+				+ (printedName != null ? "printedName=" + printedName + ", " : "")
+				+ (languageCode != null ? "languageCode=" + languageCode + ", " : "")
+				+ (scryfallUri != null ? "scryfallUri=" + scryfallUri + ", " : "")
+				+ (layout != null ? "layout=" + layout + ", " : "")
+				+ (imageUri != null ? "imageUri=" + imageUri + ", " : "")
+				+ (manaCost != null ? "manaCost=" + manaCost + ", " : "") + "cmc=" + cmc + ", "
+				+ (typeLine != null ? "typeLine=" + typeLine + ", " : "")
+				+ (printedTypeLine != null ? "printedTypeLine=" + printedTypeLine + ", " : "")
+				+ (oracleText != null ? "oracleText=" + oracleText + ", " : "")
+				+ (printedText != null ? "printedText=" + printedText + ", " : "")
+				+ (power != null ? "power=" + power + ", " : "")
+				+ (toughness != null ? "toughness=" + toughness + ", " : "")
+				+ (listColors != null ? "listColors=" + toString(listColors, maxLen) + ", " : "")
+				+ (listColorIdentities != null ? "listColorIdentities=" + toString(listColorIdentities, maxLen) + ", "
+						: "")
+				+ (listCardFaces != null ? "listCardFaces=" + toString(listCardFaces, maxLen) + ", " : "")
+				+ (listRelatedCards != null ? "listRelatedCards=" + toString(listRelatedCards, maxLen) + ", " : "")
+				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil=" + foil
+				+ ", nonFoil=" + nonFoil + ", oversized=" + oversized + ", reprint=" + reprint + ", "
+				+ (setCode != null ? "setCode=" + setCode + ", " : "")
+				+ (collectorNumber != null ? "collectorNumber=" + collectorNumber + ", " : "") + "digital=" + digital
+				+ ", " + (rarity != null ? "rarity=" + rarity + ", " : "")
+				+ (illustrationId != null ? "illustrationId=" + illustrationId + ", " : "")
+				+ (watermark != null ? "watermark=" + watermark + ", " : "")
+				+ (flavorText != null ? "flavorText=" + flavorText + ", " : "")
+				+ (artist != null ? "artist=" + artist + ", " : "") + (frame != null ? "frame=" + frame + ", " : "")
+				+ "fullArt=" + fullArt + ", " + (borderColor != null ? "borderColor=" + borderColor + ", " : "")
+				+ "timeshifted=" + timeshifted + ", colorshifted=" + colorshifted + ", futureshifted=" + futureshifted
+				+ ", edhrecRank=" + edhrecRank + ", " + (priceUsd != null ? "priceUsd=" + priceUsd + ", " : "")
+				+ (priceEur != null ? "priceEur=" + priceEur + ", " : "")
+				+ (priceTix != null ? "priceTix=" + priceTix + ", " : "")
+				+ (setLinks != null ? "links=" + toString(setLinks, maxLen) : "") + "]";
+	}
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

@@ -13,8 +13,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import de.ics.scryfall.card.Card;
-import de.ics.scryfall.set.Set;
+import de.ics.scryfall.mtg.card.MtgCard;
+import de.ics.scryfall.mtg.set.MtgSet;
 
 /**
  * This class is the entry-point for all requests to the Scryfall-API.
@@ -61,12 +61,12 @@ public class Scryfall {
 	 * @return {@code List<Set> listSets}
 	 * @throws IOException
 	 */
-	public static List<Set> getAllSets() throws IOException {
-		List<Set> listSets = new ArrayList<>();
+	public static List<MtgSet> getAllSets() throws IOException {
+		List<MtgSet> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS).getAsJsonObject();
 		JsonArray setArray = result.get("data").getAsJsonArray();
 		for (JsonElement setElement : setArray) {
-			listSets.add(new Set(setElement.getAsJsonObject()));
+			listSets.add(new MtgSet(setElement.getAsJsonObject()));
 		}
 		return listSets;
 	}
@@ -82,12 +82,12 @@ public class Scryfall {
 	 * @return {@code List<Card> listCards}
 	 * @throws IOException
 	 */
-	public static List<Card> getCardByName(String cardName) throws IOException {
-		List<Card> listCards = new ArrayList<>();
+	public static List<MtgCard> getCardByName(String cardName) throws IOException {
+		List<MtgCard> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
 		JsonArray cardArray = result.get("data").getAsJsonArray();
 		for (JsonElement cardElement : cardArray) {
-			listCards.add(new Card(cardElement.getAsJsonObject()));
+			listCards.add(new MtgCard(cardElement.getAsJsonObject()));
 		}
 		return listCards;
 	}
