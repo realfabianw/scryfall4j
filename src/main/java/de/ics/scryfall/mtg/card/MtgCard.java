@@ -26,6 +26,7 @@ import de.ics.scryfall.io.JsonHelper;
  *
  */
 public class MtgCard {
+	private final String jsonString;
 	private final String uniqueId;
 	private final String oracleId;
 	private final String name;
@@ -46,7 +47,7 @@ public class MtgCard {
 	private final List<String> listColorIdentities;
 	private final List<CardFace> listCardFaces;
 	private final List<RelatedCard> listRelatedCards;
-	private final Legality legality;
+	private Legality legality;
 	private final boolean reserved;
 	private final boolean foil;
 	private final boolean nonFoil;
@@ -66,13 +67,14 @@ public class MtgCard {
 	private final boolean timeshifted;
 	private final boolean colorshifted;
 	private final boolean futureshifted;
-	private final int edhrecRank;
-	private final BigDecimal priceUsd;
-	private final BigDecimal priceEur;
-	private final BigDecimal priceTix;
-	private final Set<Link> setLinks;
+	private int edhrecRank;
+	private BigDecimal priceUsd;
+	private BigDecimal priceEur;
+	private BigDecimal priceTix;
+	private Set<Link> setLinks;
 
 	public MtgCard(JsonObject jObject) {
+		this.jsonString = jObject.toString();
 		this.uniqueId = JsonHelper.stringJsonResponse(jObject, "id");
 		this.oracleId = JsonHelper.stringJsonResponse(jObject, "oracle_id");
 		this.name = JsonHelper.stringJsonResponse(jObject, "name");
@@ -134,16 +136,16 @@ public class MtgCard {
 				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "cardhoarder")));
 	}
 
-	public MtgCard(String uniqueId, String oracleId, String name, String printedName, String languageCode,
-			String scryfallUri, String layout, String imageUri, String manaCost, double cmc, String typeLine,
-			String printedTypeLine, String oracleText, String printedText, String power, String toughness,
-			List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
-			List<RelatedCard> listRelatedCards, Legality listLegalities, boolean reserved, boolean foil,
-			boolean nonfoil, boolean oversized, boolean reprint, String setCode, String collectorNumber,
-			boolean digital, String rarity, String illustrationId, String watermark, String flavorText, String artist,
-			String frame, boolean fullArt, String borderColor, boolean timeshifted, boolean colorshifted,
-			boolean futureshifted, int edhrecRank, BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix,
-			Set<Link> links) {
+	public MtgCard(String jsonString, String uniqueId, String oracleId, String name, String printedName,
+			String languageCode, String scryfallUri, String layout, String imageUri, String manaCost, double cmc,
+			String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
+			String toughness, List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
+			List<RelatedCard> listRelatedCards, Legality legality, boolean reserved, boolean foil, boolean nonFoil,
+			boolean oversized, boolean reprint, String setCode, String collectorNumber, boolean digital, String rarity,
+			String illustrationId, String watermark, String flavorText, String artist, String frame, boolean fullArt,
+			String borderColor, boolean timeshifted, boolean colorshifted, boolean futureshifted, int edhrecRank,
+			BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix, Set<Link> links) {
+		this.jsonString = jsonString;
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
 		this.name = name;
@@ -164,10 +166,10 @@ public class MtgCard {
 		this.listColorIdentities = listColorIdentities;
 		this.listCardFaces = listCardFaces;
 		this.listRelatedCards = listRelatedCards;
-		this.legality = listLegalities;
+		this.legality = legality;
 		this.reserved = reserved;
 		this.foil = foil;
-		this.nonFoil = nonfoil;
+		this.nonFoil = nonFoil;
 		this.oversized = oversized;
 		this.reprint = reprint;
 		this.setCode = setCode;
@@ -779,5 +781,33 @@ public class MtgCard {
 		}
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public void setLegality(Legality legality) {
+		this.legality = legality;
+	}
+
+	public void setEdhrecRank(int edhrecRank) {
+		this.edhrecRank = edhrecRank;
+	}
+
+	public void setPriceUsd(BigDecimal priceUsd) {
+		this.priceUsd = priceUsd;
+	}
+
+	public void setPriceEur(BigDecimal priceEur) {
+		this.priceEur = priceEur;
+	}
+
+	public void setPriceTix(BigDecimal priceTix) {
+		this.priceTix = priceTix;
+	}
+
+	public void setSetLinks(Set<Link> setLinks) {
+		this.setLinks = setLinks;
+	}
+
+	public String getJsonString() {
+		return jsonString;
 	}
 }

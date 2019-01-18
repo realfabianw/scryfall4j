@@ -76,18 +76,71 @@ public class Scryfall {
 	 * name is not english, or in all languages and all prints if the given name is
 	 * english.
 	 * 
-	 * @param cardName
+	 * @param uniqueId
 	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
 	 *          all languages)
 	 * @return {@code List<Card> listCards}
 	 * @throws IOException
 	 */
-	public static List<MtgCard> getCardByName(String cardName) throws IOException {
+	public static MtgCard getCardByUniqueId(String uniqueId) throws IOException {
+		JsonObject result = apiConnection(CARDS + uniqueId).getAsJsonObject();
+		return new MtgCard(result.getAsJsonObject());
+	}
+
+	public static List<MtgCard> getCardByCustomSearch(String searchQuery) throws IOException, InterruptedException {
+		List<MtgCard> listCards = new ArrayList<>();
+		JsonObject result = cardSearchQuery(searchQuery + " lang:any unique:prints").getAsJsonObject();
+
+		boolean hasMore = true;
+		String nextPage;
+		while (hasMore) {
+			hasMore = result.get("has_more").getAsBoolean();
+
+			JsonArray cardArray = result.get("data").getAsJsonArray();
+			for (JsonElement cardElement : cardArray) {
+				listCards.add(new MtgCard(cardElement.getAsJsonObject()));
+			}
+
+			if (hasMore) {
+				nextPage = result.get("next_page").getAsString();
+				Thread.sleep(100);
+				result = getJsonResponse(nextPage).getAsJsonObject();
+			}
+		}
+		return listCards;
+	}
+
+	/**
+	 * Returns all prints of the given card in the correct language if the given
+	 * name is not english, or in all languages and all prints if the given name is
+	 * english.
+	 * 
+	 * @param cardName
+	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
+	 *          all languages)
+	 * @return {@code List<Card> listCards}
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static List<MtgCard> getCardByName(String cardName) throws IOException, InterruptedException {
 		List<MtgCard> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
-		JsonArray cardArray = result.get("data").getAsJsonArray();
-		for (JsonElement cardElement : cardArray) {
-			listCards.add(new MtgCard(cardElement.getAsJsonObject()));
+
+		boolean hasMore = true;
+		String nextPage;
+		while (hasMore) {
+			hasMore = result.get("has_more").getAsBoolean();
+
+			JsonArray cardArray = result.get("data").getAsJsonArray();
+			for (JsonElement cardElement : cardArray) {
+				listCards.add(new MtgCard(cardElement.getAsJsonObject()));
+			}
+
+			if (hasMore) {
+				nextPage = result.get("next_page").getAsString();
+				Thread.sleep(100);
+				result = getJsonResponse(nextPage).getAsJsonObject();
+			}
 		}
 		return listCards;
 	}
