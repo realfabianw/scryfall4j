@@ -13,8 +13,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import de.ics.scryfall.mtg.card.MtgCard;
-import de.ics.scryfall.mtg.set.MtgSet;
+import de.ics.scryfall.mtg.card.MtgCardInformation;
+import de.ics.scryfall.mtg.set.MtgSetInformation;
 
 /**
  * This class is the entry-point for all requests to the Scryfall-API.
@@ -61,12 +61,12 @@ public class Scryfall {
 	 * @return {@code List<Set> listSets}
 	 * @throws IOException
 	 */
-	public static List<MtgSet> getAllSets() throws IOException {
-		List<MtgSet> listSets = new ArrayList<>();
+	public static List<MtgSetInformation> getAllSets() throws IOException {
+		List<MtgSetInformation> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS).getAsJsonObject();
 		JsonArray setArray = result.get("data").getAsJsonArray();
 		for (JsonElement setElement : setArray) {
-			listSets.add(new MtgSet(setElement.getAsJsonObject()));
+			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));
 		}
 		return listSets;
 	}
@@ -82,13 +82,13 @@ public class Scryfall {
 	 * @return {@code List<Card> listCards}
 	 * @throws IOException
 	 */
-	public static MtgCard getCardByUniqueId(String uniqueId) throws IOException {
+	public static MtgCardInformation getCardByUniqueId(String uniqueId) throws IOException {
 		JsonObject result = apiConnection(CARDS + uniqueId).getAsJsonObject();
-		return new MtgCard(result.getAsJsonObject());
+		return new MtgCardInformation(result.getAsJsonObject());
 	}
 
-	public static List<MtgCard> getCardByCustomSearch(String searchQuery) throws IOException, InterruptedException {
-		List<MtgCard> listCards = new ArrayList<>();
+	public static List<MtgCardInformation> getCardByCustomSearch(String searchQuery) throws IOException, InterruptedException {
+		List<MtgCardInformation> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(searchQuery + " lang:any unique:prints").getAsJsonObject();
 
 		boolean hasMore = true;
@@ -98,7 +98,7 @@ public class Scryfall {
 
 			JsonArray cardArray = result.get("data").getAsJsonArray();
 			for (JsonElement cardElement : cardArray) {
-				listCards.add(new MtgCard(cardElement.getAsJsonObject()));
+				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
 			}
 
 			if (hasMore) {
@@ -122,8 +122,8 @@ public class Scryfall {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static List<MtgCard> getCardByName(String cardName) throws IOException, InterruptedException {
-		List<MtgCard> listCards = new ArrayList<>();
+	public static List<MtgCardInformation> getCardByName(String cardName) throws IOException, InterruptedException {
+		List<MtgCardInformation> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
 
 		boolean hasMore = true;
@@ -133,7 +133,7 @@ public class Scryfall {
 
 			JsonArray cardArray = result.get("data").getAsJsonArray();
 			for (JsonElement cardElement : cardArray) {
-				listCards.add(new MtgCard(cardElement.getAsJsonObject()));
+				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
 			}
 
 			if (hasMore) {

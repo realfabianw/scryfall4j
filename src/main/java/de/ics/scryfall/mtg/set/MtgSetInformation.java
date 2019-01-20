@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.ics.scryfall.io.JsonHelper;
-import de.ics.scryfall.mtg.card.MtgCard;
+import de.ics.scryfall.mtg.card.MtgCardInformation;
 
 /**
  * This class combines all information of a set to identify and display it.
@@ -22,7 +22,7 @@ import de.ics.scryfall.mtg.card.MtgCard;
  * @author QUE
  *
  */
-public class MtgSet {
+public class MtgSetInformation {
 	private final String code;
 	private final String name;
 	private final String scryfallUri;
@@ -33,9 +33,9 @@ public class MtgSet {
 	private final boolean digital;
 	private final boolean foilOnly;
 	private final String iconUri;
-	private final Set<MtgCard> setCards;
+	private final Set<MtgCardInformation> setCards;
 
-	public MtgSet(JsonObject jObject) {
+	public MtgSetInformation(JsonObject jObject) {
 		this.code = JsonHelper.stringJsonResponse(jObject, "code");
 		this.name = JsonHelper.stringJsonResponse(jObject, "name");
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
@@ -49,9 +49,9 @@ public class MtgSet {
 		this.setCards = new HashSet<>();
 	}
 
-	public MtgSet(String code, String name, String scryfallUri, String cardListUri, String setType,
+	public MtgSetInformation(String code, String name, String scryfallUri, String cardListUri, String setType,
 			LocalDateTime releaseDate, int cardCount, boolean digital, boolean foilOnly, String iconUri,
-			Set<MtgCard> setCards) {
+			Set<MtgCardInformation> setCards) {
 		this.code = code;
 		this.name = name;
 		this.scryfallUri = scryfallUri;
@@ -78,7 +78,7 @@ public class MtgSet {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MtgSet other = (MtgSet) obj;
+		MtgSetInformation other = (MtgSetInformation) obj;
 		if (cardCount != other.cardCount)
 			return false;
 		if (code == null) {
@@ -113,7 +113,7 @@ public class MtgSet {
 		return true;
 	}
 
-	public Set<MtgCard> fetchCards() throws InterruptedException, IOException {
+	public Set<MtgCardInformation> fetchCards() throws InterruptedException, IOException {
 		String nextPageUri = getCardListUri();
 		boolean hasNextPage = true;
 
@@ -131,7 +131,7 @@ public class MtgSet {
 			hasNextPage = JsonHelper.booleanJsonResponse(listObject, "has_more");
 			nextPageUri = JsonHelper.stringJsonResponse(listObject, "next_page");
 			for (JsonElement jElement : listObject.get("data").getAsJsonArray()) {
-				setCards.add(new MtgCard(jElement.getAsJsonObject()));
+				setCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
 			}
 			Thread.sleep(100);
 		}
@@ -182,7 +182,7 @@ public class MtgSet {
 		return scryfallUri;
 	}
 
-	public Set<MtgCard> getSetCards() {
+	public Set<MtgCardInformation> getSetCards() {
 		return setCards;
 	}
 

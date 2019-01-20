@@ -25,7 +25,7 @@ import de.ics.scryfall.io.JsonHelper;
  * @author QUE
  *
  */
-public class MtgCard {
+public class MtgCardInformation {
 	private final String jsonString;
 	private final String uniqueId;
 	private final String oracleId;
@@ -73,7 +73,7 @@ public class MtgCard {
 	private BigDecimal priceTix;
 	private Set<Link> setLinks;
 
-	public MtgCard(JsonObject jObject) {
+	public MtgCardInformation(JsonObject jObject) {
 		this.jsonString = jObject.toString();
 		this.uniqueId = JsonHelper.stringJsonResponse(jObject, "id");
 		this.oracleId = JsonHelper.stringJsonResponse(jObject, "oracle_id");
@@ -136,7 +136,7 @@ public class MtgCard {
 				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "cardhoarder")));
 	}
 
-	public MtgCard(String jsonString, String uniqueId, String oracleId, String name, String printedName,
+	public MtgCardInformation(String jsonString, String uniqueId, String oracleId, String name, String printedName,
 			String languageCode, String scryfallUri, String layout, String imageUri, String manaCost, double cmc,
 			String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
 			String toughness, List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
@@ -206,7 +206,7 @@ public class MtgCard {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MtgCard other = (MtgCard) obj;
+		MtgCardInformation other = (MtgCardInformation) obj;
 		if (artist == null) {
 			if (other.artist != null)
 				return false;
