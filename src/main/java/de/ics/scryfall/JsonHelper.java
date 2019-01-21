@@ -1,4 +1,4 @@
-package de.ics.scryfall.io;
+package de.ics.scryfall;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,10 +10,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import de.ics.scryfall.mtg.card.CardFace;
-import de.ics.scryfall.mtg.card.Legality;
-import de.ics.scryfall.mtg.card.RelatedCard;
-
 /**
  * Class that catches NullPointerExceptions while getting responses from the
  * Json-File.
@@ -22,7 +18,7 @@ import de.ics.scryfall.mtg.card.RelatedCard;
  *
  */
 public class JsonHelper {
-	public static BigDecimal bigDecimalJsonResponse(JsonObject jObject, String fieldName) {
+	protected static BigDecimal bigDecimalJsonResponse(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsBigDecimal();
 		} catch (Exception e) {
@@ -30,7 +26,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static boolean booleanFromStringJsonResponse(JsonObject jObject, String fieldName, String trueString,
+	protected static boolean booleanFromStringJsonResponse(JsonObject jObject, String fieldName, String trueString,
 			String falseString) {
 		try {
 			String returnedString = jObject.get(fieldName).getAsString();
@@ -44,7 +40,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static boolean booleanJsonResponse(JsonObject jObject, String fieldName) {
+	protected static boolean booleanJsonResponse(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsBoolean();
 		} catch (Exception e) {
@@ -52,7 +48,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static double doubleJsonResponse(JsonObject jObject, String fieldName) {
+	protected static double doubleJsonResponse(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsDouble();
 		} catch (Exception e) {
@@ -60,7 +56,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static int integerJsonResponse(JsonObject jObject, String fieldName) {
+	protected static int integerJsonResponse(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsInt();
 		} catch (Exception e) {
@@ -68,15 +64,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static String largeImageJsonResponse(JsonObject jObject, String childObject) {
-		try {
-			return jObject.get(childObject).getAsJsonObject().get("large").getAsString();
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	public static List<String> listStringJsonResponse(JsonObject jObject, String arrayName) {
+	protected static List<String> listStringJsonResponse(JsonObject jObject, String arrayName) {
 		List<String> listString = new ArrayList<>();
 		try {
 			JsonArray jArray = jObject.get(arrayName).getAsJsonArray();
@@ -89,7 +77,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static LocalDateTime LocalDateTimeJsonResponse(JsonObject jObject, String fieldName, DateTimeFormatter dtf) {
+	protected static LocalDateTime localDateTimeJsonResponse(JsonObject jObject, String fieldName, DateTimeFormatter dtf) {
 		try {
 			return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
 		} catch (Exception e) {
@@ -97,7 +85,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static Legality parseLegalities(JsonObject jObject, String fieldName) {
+	protected static Legality parseLegalities(JsonObject jObject, String fieldName) {
 		try {
 			return new Legality(jObject.get(fieldName).getAsJsonObject());
 		} catch (Exception e) {
@@ -105,7 +93,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static List<CardFace> parseListCardFaces(JsonObject jObject, String arrayName) {
+	protected static List<CardFace> parseListCardFaces(JsonObject jObject, String arrayName) {
 		try {
 			List<CardFace> listCardFaces = new ArrayList<>();
 			JsonArray jArray = jObject.get(arrayName).getAsJsonArray();
@@ -119,7 +107,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static List<RelatedCard> parseListRelatedCards(JsonObject jObject, String arrayName) {
+	protected static List<RelatedCard> parseListRelatedCards(JsonObject jObject, String arrayName) {
 		try {
 			List<RelatedCard> listRelatedCards = new ArrayList<>();
 			JsonArray jArray = jObject.get(arrayName).getAsJsonArray();
@@ -133,7 +121,7 @@ public class JsonHelper {
 		}
 	}
 
-	public static String stringJsonResponse(JsonObject jObject, String fieldName) {
+	protected static String stringJsonResponse(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsString();
 		} catch (Exception e) {

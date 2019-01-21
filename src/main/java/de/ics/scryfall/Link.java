@@ -1,4 +1,4 @@
-package de.ics.scryfall.mtg.card;
+package de.ics.scryfall;
 
 public class Link {
 	private final String description;

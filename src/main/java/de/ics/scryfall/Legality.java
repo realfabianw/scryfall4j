@@ -1,8 +1,6 @@
-package de.ics.scryfall.mtg.card;
+package de.ics.scryfall;
 
 import com.google.gson.JsonObject;
-
-import de.ics.scryfall.io.JsonHelper;
 
 /**
  * Bundles all information about a cards legality.

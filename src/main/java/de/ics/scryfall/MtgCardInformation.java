@@ -1,15 +1,21 @@
-package de.ics.scryfall.mtg.card;
+package de.ics.scryfall;
 
+import java.awt.Image;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import com.google.gson.JsonObject;
+import javax.imageio.ImageIO;
 
-import de.ics.scryfall.io.JsonHelper;
+import com.google.gson.JsonObject;
 
 /**
  * This class tries to implement the data-structure for all available MTG
@@ -34,7 +40,7 @@ public class MtgCardInformation {
 	private final String languageCode;
 	private final String scryfallUri;
 	private final String layout;
-	private final String imageUri;
+	private final Map<ImageType, String> imageUri;
 	private final String manaCost;
 	private final double cmc;
 	private final String typeLine;
@@ -83,7 +89,13 @@ public class MtgCardInformation {
 		this.languageCode = JsonHelper.stringJsonResponse(jObject, "lang");
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
 		this.layout = JsonHelper.stringJsonResponse(jObject, "layout");
-		this.imageUri = JsonHelper.largeImageJsonResponse(jObject, "image_uris");
+		this.imageUri = new HashMap<>();
+		this.imageUri.put(ImageType.SMALL, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
+		this.imageUri.put(ImageType.NORMAL, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
+		this.imageUri.put(ImageType.LARGE, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
+		this.imageUri.put(ImageType.PNG, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
+		this.imageUri.put(ImageType.ART_CROP, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
+		this.imageUri.put(ImageType.BORDER_CROP, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
 		this.manaCost = JsonHelper.stringJsonResponse(jObject, "mana_cost");
 		this.cmc = JsonHelper.doubleJsonResponse(jObject, "cmc");
 		this.typeLine = JsonHelper.stringJsonResponse(jObject, "type_line");
@@ -139,14 +151,14 @@ public class MtgCardInformation {
 	}
 
 	public MtgCardInformation(String jsonString, String uniqueId, String oracleId, String name, String printedName,
-			String languageCode, String scryfallUri, String layout, String imageUri, String manaCost, double cmc,
+			String languageCode, String scryfallUri, String layout, Map<ImageType, String> imageUri, String manaCost, double cmc,
 			String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
 			String toughness, List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
 			List<RelatedCard> listRelatedCards, Legality legality, boolean reserved, boolean foil, boolean nonFoil,
-			boolean oversized, boolean reprint, String setCode, String setName, String collectorNumber, boolean digital, String rarity,
-			String illustrationId, String watermark, String flavorText, String artist, String frame, boolean fullArt,
-			String borderColor, boolean timeshifted, boolean colorshifted, boolean futureshifted, int edhrecRank,
-			BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix, Set<Link> links) {
+			boolean oversized, boolean reprint, String setCode, String setName, String collectorNumber, boolean digital,
+			String rarity, String illustrationId, String watermark, String flavorText, String artist, String frame,
+			boolean fullArt, String borderColor, boolean timeshifted, boolean colorshifted, boolean futureshifted,
+			int edhrecRank, BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix, Set<Link> links) {
 		this.jsonString = jsonString;
 		this.uniqueId = uniqueId;
 		this.oracleId = oracleId;
@@ -194,6 +206,14 @@ public class MtgCardInformation {
 		this.priceEur = priceEur;
 		this.priceTix = priceTix;
 		this.setLinks = links;
+	}
+
+	public Image getImage(ImageType imageType) throws IOException, IllegalArgumentException {
+		if (getImageUri().containsKey(imageType)) {
+		return ImageIO.read(new URL(getImageUri().get(imageType)));
+		} else {
+			throw new IllegalArgumentException("The card has no image of this the type: " + imageType);
+		}
 	}
 
 	/*
@@ -431,13 +451,6 @@ public class MtgCardInformation {
 	 */
 	public String getIllustrationId() {
 		return illustrationId;
-	}
-
-	/**
-	 * @return the imageUri
-	 */
-	public String getImageUri() {
-		return imageUri;
 	}
 
 	/**
@@ -773,19 +786,6 @@ public class MtgCardInformation {
 				+ (setLinks != null ? "setLinks=" + setLinks : "") + "]";
 	}
 
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-			if (i > 0)
-				builder.append(", ");
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
-	}
-
 	public void setLegality(Legality legality) {
 		this.legality = legality;
 	}
@@ -816,5 +816,12 @@ public class MtgCardInformation {
 
 	public String getSetName() {
 		return setName;
+	}
+
+	/**
+	 * @return the imageUri
+	 */
+	public Map<ImageType, String> getImageUri() {
+		return imageUri;
 	}
 }

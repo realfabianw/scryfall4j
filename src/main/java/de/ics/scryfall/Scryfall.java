@@ -13,9 +13,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import de.ics.scryfall.mtg.card.MtgCardInformation;
-import de.ics.scryfall.mtg.set.MtgSetInformation;
-
 /**
  * This class is the entry-point for all requests to the Scryfall-API.
  * 
@@ -64,6 +61,22 @@ public class Scryfall {
 	public static List<MtgSetInformation> getAllSets() throws IOException {
 		List<MtgSetInformation> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS).getAsJsonObject();
+		JsonArray setArray = result.get("data").getAsJsonArray();
+		for (JsonElement setElement : setArray) {
+			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));
+		}
+		return listSets;
+	}
+	
+	/**
+	 * Returns all currently listed sets.
+	 * 
+	 * @return {@code List<Set> listSets}
+	 * @throws IOException
+	 */
+	public static List<MtgSetInformation> getSetByCode(String setCode) throws IOException {
+		List<MtgSetInformation> listSets = new ArrayList<>();
+		JsonObject result = apiConnection(SETS + setCode).getAsJsonObject();
 		JsonArray setArray = result.get("data").getAsJsonArray();
 		for (JsonElement setElement : setArray) {
 			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));

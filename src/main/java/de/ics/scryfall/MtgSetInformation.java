@@ -1,20 +1,28 @@
-package de.ics.scryfall.mtg.set;
+package de.ics.scryfall;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import de.ics.scryfall.io.JsonHelper;
-import de.ics.scryfall.mtg.card.MtgCardInformation;
 
 /**
  * This class combines all information of a set to identify and display it.
@@ -41,7 +49,7 @@ public class MtgSetInformation {
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
 		this.cardListUri = JsonHelper.stringJsonResponse(jObject, "search_uri");
 		this.setType = JsonHelper.stringJsonResponse(jObject, "set_type");
-		this.releaseDate = JsonHelper.LocalDateTimeJsonResponse(jObject, "released_at", DateTimeFormatter.ISO_DATE);
+		this.releaseDate = JsonHelper.localDateTimeJsonResponse(jObject, "released_at", DateTimeFormatter.ISO_DATE);
 		this.cardCount = JsonHelper.integerJsonResponse(jObject, "card_count");
 		this.digital = JsonHelper.booleanJsonResponse(jObject, "digital");
 		this.foilOnly = JsonHelper.booleanJsonResponse(jObject, "foil_only");
@@ -63,6 +71,47 @@ public class MtgSetInformation {
 		this.foilOnly = foilOnly;
 		this.iconUri = iconUri;
 		this.setCards = setCards;
+	}
+
+	/**
+	 * Die getIcon()-Funktion wird aus dem Wrapper entfernt.
+	 * 
+	 * @return the icon
+	 * @throws IOException
+	 * @throws TranscoderException
+	 */
+	public BufferedImage downloadIcon(String path) throws TranscoderException, IOException {
+		File fullPath = new File(path + "/" + getCode() + ".png");
+		saveSVGtoPNG(getIconUri(), fullPath);
+		return ImageIO.read(fullPath);
+	}
+
+	/**
+	 * this method converts a given svg image (by url) to a png image on the disk at
+	 * the given location.
+	 * 
+	 * @author techhunter @ stackoverflow
+	 * @see https://stackoverflow.com/questions/42340833/convert-svg-image-to-png-in-java-by-servlet
+	 * @param svgUri
+	 * @param output
+	 * @throws TranscoderException
+	 * @throws IOException
+	 */
+	private void saveSVGtoPNG(String svgUri, File output) throws TranscoderException, IOException {
+		// Step -1: We read the input SVG document into Transcoder Input
+		// We use Java NIO for this purpose
+		String svg_URI_input = svgUri;
+		TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
+		// Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
+		OutputStream png_ostream = new FileOutputStream(output);
+		TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
+		// Step-3: Create PNGTranscoder and define hints if required
+		PNGTranscoder my_converter = new PNGTranscoder();
+		// Step-4: Convert and Write output
+		my_converter.transcode(input_svg_image, output_png_image);
+		// Step 5- close / flush Output Stream
+		png_ostream.flush();
+		png_ostream.close();
 	}
 
 	/*
