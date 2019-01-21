@@ -54,6 +54,7 @@ public class MtgCardInformation {
 	private final boolean oversized;
 	private final boolean reprint;
 	private final String setCode;
+	private final String setName;
 	private final String collectorNumber;
 	private final boolean digital;
 	private final String rarity;
@@ -102,6 +103,7 @@ public class MtgCardInformation {
 		this.oversized = JsonHelper.booleanJsonResponse(jObject, "oversized");
 		this.reprint = JsonHelper.booleanJsonResponse(jObject, "reprint");
 		this.setCode = JsonHelper.stringJsonResponse(jObject, "set");
+		this.setName = JsonHelper.stringJsonResponse(jObject, "set_name");
 		this.collectorNumber = JsonHelper.stringJsonResponse(jObject, "collector_number");
 		this.digital = JsonHelper.booleanJsonResponse(jObject, "digital");
 		this.rarity = JsonHelper.stringJsonResponse(jObject, "rarity");
@@ -141,7 +143,7 @@ public class MtgCardInformation {
 			String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
 			String toughness, List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
 			List<RelatedCard> listRelatedCards, Legality legality, boolean reserved, boolean foil, boolean nonFoil,
-			boolean oversized, boolean reprint, String setCode, String collectorNumber, boolean digital, String rarity,
+			boolean oversized, boolean reprint, String setCode, String setName, String collectorNumber, boolean digital, String rarity,
 			String illustrationId, String watermark, String flavorText, String artist, String frame, boolean fullArt,
 			String borderColor, boolean timeshifted, boolean colorshifted, boolean futureshifted, int edhrecRank,
 			BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix, Set<Link> links) {
@@ -173,6 +175,7 @@ public class MtgCardInformation {
 		this.oversized = oversized;
 		this.reprint = reprint;
 		this.setCode = setCode;
+		this.setName = setName;
 		this.collectorNumber = collectorNumber;
 		this.digital = digital;
 		this.rarity = rarity;
@@ -733,8 +736,8 @@ public class MtgCardInformation {
 
 	@Override
 	public String toString() {
-		final int maxLen = 10;
-		return "Card [" + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
+		return "MtgCardInformation [" + (jsonString != null ? "jsonString=" + jsonString + ", " : "")
+				+ (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
 				+ (oracleId != null ? "oracleId=" + oracleId + ", " : "") + (name != null ? "name=" + name + ", " : "")
 				+ (printedName != null ? "printedName=" + printedName + ", " : "")
 				+ (languageCode != null ? "languageCode=" + languageCode + ", " : "")
@@ -748,14 +751,14 @@ public class MtgCardInformation {
 				+ (printedText != null ? "printedText=" + printedText + ", " : "")
 				+ (power != null ? "power=" + power + ", " : "")
 				+ (toughness != null ? "toughness=" + toughness + ", " : "")
-				+ (listColors != null ? "listColors=" + toString(listColors, maxLen) + ", " : "")
-				+ (listColorIdentities != null ? "listColorIdentities=" + toString(listColorIdentities, maxLen) + ", "
-						: "")
-				+ (listCardFaces != null ? "listCardFaces=" + toString(listCardFaces, maxLen) + ", " : "")
-				+ (listRelatedCards != null ? "listRelatedCards=" + toString(listRelatedCards, maxLen) + ", " : "")
+				+ (listColors != null ? "listColors=" + listColors + ", " : "")
+				+ (listColorIdentities != null ? "listColorIdentities=" + listColorIdentities + ", " : "")
+				+ (listCardFaces != null ? "listCardFaces=" + listCardFaces + ", " : "")
+				+ (listRelatedCards != null ? "listRelatedCards=" + listRelatedCards + ", " : "")
 				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil=" + foil
 				+ ", nonFoil=" + nonFoil + ", oversized=" + oversized + ", reprint=" + reprint + ", "
 				+ (setCode != null ? "setCode=" + setCode + ", " : "")
+				+ (setName != null ? "setName=" + setName + ", " : "")
 				+ (collectorNumber != null ? "collectorNumber=" + collectorNumber + ", " : "") + "digital=" + digital
 				+ ", " + (rarity != null ? "rarity=" + rarity + ", " : "")
 				+ (illustrationId != null ? "illustrationId=" + illustrationId + ", " : "")
@@ -767,7 +770,7 @@ public class MtgCardInformation {
 				+ ", edhrecRank=" + edhrecRank + ", " + (priceUsd != null ? "priceUsd=" + priceUsd + ", " : "")
 				+ (priceEur != null ? "priceEur=" + priceEur + ", " : "")
 				+ (priceTix != null ? "priceTix=" + priceTix + ", " : "")
-				+ (setLinks != null ? "links=" + toString(setLinks, maxLen) : "") + "]";
+				+ (setLinks != null ? "setLinks=" + setLinks : "") + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
@@ -809,5 +812,9 @@ public class MtgCardInformation {
 
 	public String getJsonString() {
 		return jsonString;
+	}
+
+	public String getSetName() {
+		return setName;
 	}
 }
