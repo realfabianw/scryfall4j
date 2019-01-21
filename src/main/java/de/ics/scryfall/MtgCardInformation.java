@@ -3,12 +3,9 @@ package de.ics.scryfall;
 import java.awt.Image;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -90,12 +87,18 @@ public class MtgCardInformation {
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
 		this.layout = JsonHelper.stringJsonResponse(jObject, "layout");
 		this.imageUri = new HashMap<>();
-		this.imageUri.put(ImageType.SMALL, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
-		this.imageUri.put(ImageType.NORMAL, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
-		this.imageUri.put(ImageType.LARGE, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
-		this.imageUri.put(ImageType.PNG, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
-		this.imageUri.put(ImageType.ART_CROP, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
-		this.imageUri.put(ImageType.BORDER_CROP, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
+		this.imageUri.put(ImageType.SMALL,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
+		this.imageUri.put(ImageType.NORMAL,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
+		this.imageUri.put(ImageType.LARGE,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
+		this.imageUri.put(ImageType.PNG,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
+		this.imageUri.put(ImageType.ART_CROP,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
+		this.imageUri.put(ImageType.BORDER_CROP,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
 		this.manaCost = JsonHelper.stringJsonResponse(jObject, "mana_cost");
 		this.cmc = JsonHelper.doubleJsonResponse(jObject, "cmc");
 		this.typeLine = JsonHelper.stringJsonResponse(jObject, "type_line");
@@ -151,8 +154,8 @@ public class MtgCardInformation {
 	}
 
 	public MtgCardInformation(String jsonString, String uniqueId, String oracleId, String name, String printedName,
-			String languageCode, String scryfallUri, String layout, Map<ImageType, String> imageUri, String manaCost, double cmc,
-			String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
+			String languageCode, String scryfallUri, String layout, Map<ImageType, String> imageUri, String manaCost,
+			double cmc, String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
 			String toughness, List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
 			List<RelatedCard> listRelatedCards, Legality legality, boolean reserved, boolean foil, boolean nonFoil,
 			boolean oversized, boolean reprint, String setCode, String setName, String collectorNumber, boolean digital,
@@ -206,14 +209,6 @@ public class MtgCardInformation {
 		this.priceEur = priceEur;
 		this.priceTix = priceTix;
 		this.setLinks = links;
-	}
-
-	public Image getImage(ImageType imageType) throws IOException, IllegalArgumentException {
-		if (getImageUri().containsKey(imageType)) {
-		return ImageIO.read(new URL(getImageUri().get(imageType)));
-		} else {
-			throw new IllegalArgumentException("The card has no image of this the type: " + imageType);
-		}
 	}
 
 	/*
@@ -453,6 +448,25 @@ public class MtgCardInformation {
 		return illustrationId;
 	}
 
+	public Image getImage(ImageType imageType) throws IOException, IllegalArgumentException {
+		if (getImageUri().containsKey(imageType)) {
+			return ImageIO.read(new URL(getImageUri().get(imageType)));
+		} else {
+			throw new IllegalArgumentException("The card has no image of this the type: " + imageType);
+		}
+	}
+
+	/**
+	 * @return the imageUri
+	 */
+	public Map<ImageType, String> getImageUri() {
+		return imageUri;
+	}
+
+	public String getJsonString() {
+		return jsonString;
+	}
+
 	/**
 	 * @return the languageCode
 	 */
@@ -593,6 +607,10 @@ public class MtgCardInformation {
 
 	public Set<Link> getSetLinks() {
 		return setLinks;
+	}
+
+	public String getSetName() {
+		return setName;
 	}
 
 	/**
@@ -747,6 +765,30 @@ public class MtgCardInformation {
 		return timeshifted;
 	}
 
+	public void setEdhrecRank(int edhrecRank) {
+		this.edhrecRank = edhrecRank;
+	}
+
+	public void setLegality(Legality legality) {
+		this.legality = legality;
+	}
+
+	public void setPriceEur(BigDecimal priceEur) {
+		this.priceEur = priceEur;
+	}
+
+	public void setPriceTix(BigDecimal priceTix) {
+		this.priceTix = priceTix;
+	}
+
+	public void setPriceUsd(BigDecimal priceUsd) {
+		this.priceUsd = priceUsd;
+	}
+
+	public void setSetLinks(Set<Link> setLinks) {
+		this.setLinks = setLinks;
+	}
+
 	@Override
 	public String toString() {
 		return "MtgCardInformation [" + (jsonString != null ? "jsonString=" + jsonString + ", " : "")
@@ -784,44 +826,5 @@ public class MtgCardInformation {
 				+ (priceEur != null ? "priceEur=" + priceEur + ", " : "")
 				+ (priceTix != null ? "priceTix=" + priceTix + ", " : "")
 				+ (setLinks != null ? "setLinks=" + setLinks : "") + "]";
-	}
-
-	public void setLegality(Legality legality) {
-		this.legality = legality;
-	}
-
-	public void setEdhrecRank(int edhrecRank) {
-		this.edhrecRank = edhrecRank;
-	}
-
-	public void setPriceUsd(BigDecimal priceUsd) {
-		this.priceUsd = priceUsd;
-	}
-
-	public void setPriceEur(BigDecimal priceEur) {
-		this.priceEur = priceEur;
-	}
-
-	public void setPriceTix(BigDecimal priceTix) {
-		this.priceTix = priceTix;
-	}
-
-	public void setSetLinks(Set<Link> setLinks) {
-		this.setLinks = setLinks;
-	}
-
-	public String getJsonString() {
-		return jsonString;
-	}
-
-	public String getSetName() {
-		return setName;
-	}
-
-	/**
-	 * @return the imageUri
-	 */
-	public Map<ImageType, String> getImageUri() {
-		return imageUri;
 	}
 }

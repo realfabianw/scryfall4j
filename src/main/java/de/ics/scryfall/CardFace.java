@@ -49,12 +49,18 @@ public class CardFace {
 		this.flavorText = JsonHelper.stringJsonResponse(jObject, "flavor_text");
 		this.illustrationId = JsonHelper.stringJsonResponse(jObject, "illustration_id");
 		this.imageUri = new HashMap<>();
-		this.imageUri.put(ImageType.SMALL, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
-		this.imageUri.put(ImageType.NORMAL, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
-		this.imageUri.put(ImageType.LARGE, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
-		this.imageUri.put(ImageType.PNG, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
-		this.imageUri.put(ImageType.ART_CROP, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
-		this.imageUri.put(ImageType.BORDER_CROP, JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
+		this.imageUri.put(ImageType.SMALL,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
+		this.imageUri.put(ImageType.NORMAL,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
+		this.imageUri.put(ImageType.LARGE,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
+		this.imageUri.put(ImageType.PNG,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
+		this.imageUri.put(ImageType.ART_CROP,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
+		this.imageUri.put(ImageType.BORDER_CROP,
+				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
 	}
 
 	public CardFace(String name, String printedName, String manaCost, String typeLine, String printedTypeLine,
@@ -74,14 +80,6 @@ public class CardFace {
 		this.flavorText = flavorText;
 		this.illustrationId = illustrationId;
 		this.imageUri = imageUri;
-	}
-	
-	public Image getImage(ImageType imageType) throws IOException, IllegalArgumentException {
-		if (getImageUri().containsKey(imageType)) {
-		return ImageIO.read(new URL(getImageUri().get(imageType)));
-		} else {
-			throw new IllegalArgumentException("The card has no image of this the type: " + imageType);
-		}
 	}
 
 	/*
@@ -183,6 +181,21 @@ public class CardFace {
 	 */
 	public String getIllustrationId() {
 		return illustrationId;
+	}
+
+	public Image getImage(ImageType imageType) throws IOException, IllegalArgumentException {
+		if (getImageUri().containsKey(imageType)) {
+			return ImageIO.read(new URL(getImageUri().get(imageType)));
+		} else {
+			throw new IllegalArgumentException("The card has no image of this the type: " + imageType);
+		}
+	}
+
+	/**
+	 * @return the imageUri
+	 */
+	public Map<ImageType, String> getImageUri() {
+		return imageUri;
 	}
 
 	/**
@@ -300,12 +313,5 @@ public class CardFace {
 				+ printedText + ", listColors=" + listColors + ", listColorIndicators=" + listColorIndicators
 				+ ", power=" + power + ", toughness=" + toughness + ", flavorText=" + flavorText + ", illustrationId="
 				+ illustrationId + ", imageUri=" + imageUri + "]";
-	}
-
-	/**
-	 * @return the imageUri
-	 */
-	public Map<ImageType, String> getImageUri() {
-		return imageUri;
 	}
 }

@@ -86,34 +86,6 @@ public class MtgSetInformation {
 		return ImageIO.read(fullPath);
 	}
 
-	/**
-	 * this method converts a given svg image (by url) to a png image on the disk at
-	 * the given location.
-	 * 
-	 * @author techhunter @ stackoverflow
-	 * @see https://stackoverflow.com/questions/42340833/convert-svg-image-to-png-in-java-by-servlet
-	 * @param svgUri
-	 * @param output
-	 * @throws TranscoderException
-	 * @throws IOException
-	 */
-	private void saveSVGtoPNG(String svgUri, File output) throws TranscoderException, IOException {
-		// Step -1: We read the input SVG document into Transcoder Input
-		// We use Java NIO for this purpose
-		String svg_URI_input = svgUri;
-		TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
-		// Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
-		OutputStream png_ostream = new FileOutputStream(output);
-		TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
-		// Step-3: Create PNGTranscoder and define hints if required
-		PNGTranscoder my_converter = new PNGTranscoder();
-		// Step-4: Convert and Write output
-		my_converter.transcode(input_svg_image, output_png_image);
-		// Step 5- close / flush Output Stream
-		png_ostream.flush();
-		png_ostream.close();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -274,6 +246,34 @@ public class MtgSetInformation {
 	 */
 	public boolean isFoilOnly() {
 		return foilOnly;
+	}
+
+	/**
+	 * this method converts a given svg image (by url) to a png image on the disk at
+	 * the given location.
+	 * 
+	 * @author techhunter @ stackoverflow
+	 * @see https://stackoverflow.com/questions/42340833/convert-svg-image-to-png-in-java-by-servlet
+	 * @param svgUri
+	 * @param output
+	 * @throws TranscoderException
+	 * @throws IOException
+	 */
+	private void saveSVGtoPNG(String svgUri, File output) throws TranscoderException, IOException {
+		// Step -1: We read the input SVG document into Transcoder Input
+		// We use Java NIO for this purpose
+		String svg_URI_input = svgUri;
+		TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
+		// Step-2: Define OutputStream to PNG Image and attach to TranscoderOutput
+		OutputStream png_ostream = new FileOutputStream(output);
+		TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
+		// Step-3: Create PNGTranscoder and define hints if required
+		PNGTranscoder my_converter = new PNGTranscoder();
+		// Step-4: Convert and Write output
+		my_converter.transcode(input_svg_image, output_png_image);
+		// Step 5- close / flush Output Stream
+		png_ostream.flush();
+		png_ostream.close();
 	}
 
 	@Override

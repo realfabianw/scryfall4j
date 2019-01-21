@@ -77,7 +77,8 @@ public class JsonHelper {
 		}
 	}
 
-	protected static LocalDateTime localDateTimeJsonResponse(JsonObject jObject, String fieldName, DateTimeFormatter dtf) {
+	protected static LocalDateTime localDateTimeJsonResponse(JsonObject jObject, String fieldName,
+			DateTimeFormatter dtf) {
 		try {
 			return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
 		} catch (Exception e) {

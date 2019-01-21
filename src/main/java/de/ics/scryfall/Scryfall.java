@@ -67,40 +67,9 @@ public class Scryfall {
 		}
 		return listSets;
 	}
-	
-	/**
-	 * Returns all currently listed sets.
-	 * 
-	 * @return {@code List<Set> listSets}
-	 * @throws IOException
-	 */
-	public static List<MtgSetInformation> getSetByCode(String setCode) throws IOException {
-		List<MtgSetInformation> listSets = new ArrayList<>();
-		JsonObject result = apiConnection(SETS + setCode).getAsJsonObject();
-		JsonArray setArray = result.get("data").getAsJsonArray();
-		for (JsonElement setElement : setArray) {
-			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));
-		}
-		return listSets;
-	}
 
-	/**
-	 * Returns all prints of the given card in the correct language if the given
-	 * name is not english, or in all languages and all prints if the given name is
-	 * english.
-	 * 
-	 * @param uniqueId
-	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
-	 *          all languages)
-	 * @return {@code List<Card> listCards}
-	 * @throws IOException
-	 */
-	public static MtgCardInformation getCardByUniqueId(String uniqueId) throws IOException {
-		JsonObject result = apiConnection(CARDS + uniqueId).getAsJsonObject();
-		return new MtgCardInformation(result.getAsJsonObject());
-	}
-
-	public static List<MtgCardInformation> getCardByCustomSearch(String searchQuery) throws IOException, InterruptedException {
+	public static List<MtgCardInformation> getCardByCustomSearch(String searchQuery)
+			throws IOException, InterruptedException {
 		List<MtgCardInformation> listCards = new ArrayList<>();
 		JsonObject result = cardSearchQuery(searchQuery + " lang:any unique:prints").getAsJsonObject();
 
@@ -159,6 +128,22 @@ public class Scryfall {
 	}
 
 	/**
+	 * Returns all prints of the given card in the correct language if the given
+	 * name is not english, or in all languages and all prints if the given name is
+	 * english.
+	 * 
+	 * @param uniqueId
+	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
+	 *          all languages)
+	 * @return {@code List<Card> listCards}
+	 * @throws IOException
+	 */
+	public static MtgCardInformation getCardByUniqueId(String uniqueId) throws IOException {
+		JsonObject result = apiConnection(CARDS + uniqueId).getAsJsonObject();
+		return new MtgCardInformation(result.getAsJsonObject());
+	}
+
+	/**
 	 * returns the response from the api as a jsonElement ready to parse.
 	 * 
 	 * @param urlString
@@ -175,5 +160,21 @@ public class Scryfall {
 		}
 		bufferedReader.close();
 		return new JsonParser().parse(jsonString.toString());
+	}
+
+	/**
+	 * Returns all currently listed sets.
+	 * 
+	 * @return {@code List<Set> listSets}
+	 * @throws IOException
+	 */
+	public static List<MtgSetInformation> getSetByCode(String setCode) throws IOException {
+		List<MtgSetInformation> listSets = new ArrayList<>();
+		JsonObject result = apiConnection(SETS + setCode).getAsJsonObject();
+		JsonArray setArray = result.get("data").getAsJsonArray();
+		for (JsonElement setElement : setArray) {
+			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));
+		}
+		return listSets;
 	}
 }
