@@ -84,7 +84,7 @@ public class MtgSetInformation {
 	 * @throws TranscoderException
 	 */
 	public BufferedImage downloadIcon(String path) throws TranscoderException, IOException {
-		File fullPath = new File(path + "/" + getCode() + ".png");
+		File fullPath = new File(path + "/" + getCode() + ".jpg");
 		saveSVGtoPNG(getIconUri(), fullPath);
 		return ImageIO.read(fullPath);
 	}
