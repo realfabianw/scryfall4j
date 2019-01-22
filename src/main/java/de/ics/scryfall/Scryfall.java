@@ -163,18 +163,14 @@ public class Scryfall {
 	}
 
 	/**
-	 * Returns all currently listed sets.
+	 * Returns a specific set.
 	 * 
 	 * @return {@code List<Set> listSets}
 	 * @throws IOException
 	 */
-	public static List<MtgSetInformation> getSetByCode(String setCode) throws IOException {
+	public static MtgSetInformation getSetByCode(String setCode) throws IOException {
 		List<MtgSetInformation> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS + setCode).getAsJsonObject();
-		JsonArray setArray = result.get("data").getAsJsonArray();
-		for (JsonElement setElement : setArray) {
-			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));
-		}
-		return listSets;
+		return new MtgSetInformation(result);
 	}
 }
