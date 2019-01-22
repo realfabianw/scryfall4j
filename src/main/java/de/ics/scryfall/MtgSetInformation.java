@@ -31,6 +31,7 @@ import com.google.gson.JsonParser;
  *
  */
 public class MtgSetInformation {
+	private final String jsonString;
 	private final String code;
 	private final String name;
 	private final String scryfallUri;
@@ -44,6 +45,7 @@ public class MtgSetInformation {
 	private final Set<MtgCardInformation> setCards;
 
 	public MtgSetInformation(JsonObject jObject) {
+		this.jsonString = jObject.toString();
 		this.code = JsonHelper.stringJsonResponse(jObject, "code");
 		this.name = JsonHelper.stringJsonResponse(jObject, "name");
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
@@ -57,9 +59,10 @@ public class MtgSetInformation {
 		this.setCards = new HashSet<>();
 	}
 
-	public MtgSetInformation(String code, String name, String scryfallUri, String cardListUri, String setType,
+	public MtgSetInformation(String jsonString, String code, String name, String scryfallUri, String cardListUri, String setType,
 			LocalDateTime releaseDate, int cardCount, boolean digital, boolean foilOnly, String iconUri,
 			Set<MtgCardInformation> setCards) {
+		this.jsonString = jsonString;
 		this.code = code;
 		this.name = name;
 		this.scryfallUri = scryfallUri;
@@ -284,5 +287,9 @@ public class MtgSetInformation {
 				+ (releaseDate != null ? "releaseDate=" + releaseDate + ", " : "") + "cardCount=" + cardCount
 				+ ", digital=" + digital + ", foilOnly=" + foilOnly + ", "
 				+ (iconUri != null ? "iconUri=" + iconUri : "") + "]";
+	}
+
+	public String getJsonString() {
+		return jsonString;
 	}
 }
