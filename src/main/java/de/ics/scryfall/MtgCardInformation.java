@@ -52,8 +52,8 @@ public class MtgCardInformation {
 	private final List<RelatedCard> listRelatedCards;
 	private Legality legality;
 	private final boolean reserved;
-	private final boolean foil;
-	private final boolean nonFoil;
+	private final boolean foilAvailable;
+	private final boolean nonFoilAvailable;
 	private final boolean oversized;
 	private final boolean reprint;
 	private final String setCode;
@@ -113,8 +113,8 @@ public class MtgCardInformation {
 		this.listRelatedCards = JsonHelper.parseListRelatedCards(jObject, "all_parts");
 		this.legality = JsonHelper.parseLegalities(jObject, "legalities");
 		this.reserved = JsonHelper.booleanJsonResponse(jObject, "reserved");
-		this.foil = JsonHelper.booleanJsonResponse(jObject, "foil");
-		this.nonFoil = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
+		this.foilAvailable = JsonHelper.booleanJsonResponse(jObject, "foil");
+		this.nonFoilAvailable = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
 		this.oversized = JsonHelper.booleanJsonResponse(jObject, "oversized");
 		this.reprint = JsonHelper.booleanJsonResponse(jObject, "reprint");
 		this.setCode = JsonHelper.stringJsonResponse(jObject, "set");
@@ -185,8 +185,8 @@ public class MtgCardInformation {
 		this.listRelatedCards = listRelatedCards;
 		this.legality = legality;
 		this.reserved = reserved;
-		this.foil = foil;
-		this.nonFoil = nonFoil;
+		this.foilAvailable = foil;
+		this.nonFoilAvailable = nonFoil;
 		this.oversized = oversized;
 		this.reprint = reprint;
 		this.setCode = setCode;
@@ -251,7 +251,7 @@ public class MtgCardInformation {
 				return false;
 		} else if (!flavorText.equals(other.flavorText))
 			return false;
-		if (foil != other.foil)
+		if (foilAvailable != other.foilAvailable)
 			return false;
 		if (frame == null) {
 			if (other.frame != null)
@@ -317,7 +317,7 @@ public class MtgCardInformation {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (nonFoil != other.nonFoil)
+		if (nonFoilAvailable != other.nonFoilAvailable)
 			return false;
 		if (oracleId == null) {
 			if (other.oracleId != null)
@@ -659,7 +659,7 @@ public class MtgCardInformation {
 		result = prime * result + (colorshifted ? 1231 : 1237);
 		result = prime * result + (digital ? 1231 : 1237);
 		result = prime * result + ((flavorText == null) ? 0 : flavorText.hashCode());
-		result = prime * result + (foil ? 1231 : 1237);
+		result = prime * result + (foilAvailable ? 1231 : 1237);
 		result = prime * result + ((frame == null) ? 0 : frame.hashCode());
 		result = prime * result + (fullArt ? 1231 : 1237);
 		result = prime * result + (futureshifted ? 1231 : 1237);
@@ -674,7 +674,7 @@ public class MtgCardInformation {
 		result = prime * result + ((listRelatedCards == null) ? 0 : listRelatedCards.hashCode());
 		result = prime * result + ((manaCost == null) ? 0 : manaCost.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (nonFoil ? 1231 : 1237);
+		result = prime * result + (nonFoilAvailable ? 1231 : 1237);
 		result = prime * result + ((oracleId == null) ? 0 : oracleId.hashCode());
 		result = prime * result + ((oracleText == null) ? 0 : oracleText.hashCode());
 		result = prime * result + (oversized ? 1231 : 1237);
@@ -712,8 +712,8 @@ public class MtgCardInformation {
 	/**
 	 * @return the foil
 	 */
-	public boolean isFoil() {
-		return foil;
+	public boolean isFoilAvailable() {
+		return foilAvailable;
 	}
 
 	/**
@@ -733,8 +733,8 @@ public class MtgCardInformation {
 	/**
 	 * @return the nonfoil
 	 */
-	public boolean isNonFoil() {
-		return nonFoil;
+	public boolean isNonFoilAvailable() {
+		return nonFoilAvailable;
 	}
 
 	/**
@@ -810,8 +810,8 @@ public class MtgCardInformation {
 				+ (listColorIdentities != null ? "listColorIdentities=" + listColorIdentities + ", " : "")
 				+ (listCardFaces != null ? "listCardFaces=" + listCardFaces + ", " : "")
 				+ (listRelatedCards != null ? "listRelatedCards=" + listRelatedCards + ", " : "")
-				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil=" + foil
-				+ ", nonFoil=" + nonFoil + ", oversized=" + oversized + ", reprint=" + reprint + ", "
+				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil=" + foilAvailable
+				+ ", nonFoil=" + nonFoilAvailable + ", oversized=" + oversized + ", reprint=" + reprint + ", "
 				+ (setCode != null ? "setCode=" + setCode + ", " : "")
 				+ (setName != null ? "setName=" + setName + ", " : "")
 				+ (collectorNumber != null ? "collectorNumber=" + collectorNumber + ", " : "") + "digital=" + digital
