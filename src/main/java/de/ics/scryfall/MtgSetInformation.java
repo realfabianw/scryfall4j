@@ -51,7 +51,7 @@ public class MtgSetInformation {
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
 		this.cardListUri = JsonHelper.stringJsonResponse(jObject, "search_uri");
 		this.setType = JsonHelper.stringJsonResponse(jObject, "set_type");
-		this.releaseDate = JsonHelper.localDateTimeJsonResponse(jObject, "releaseDate", DateTimeFormatter.ISO_DATE);
+		this.releaseDate = JsonHelper.localDateTimeJsonResponse(jObject, "released_at", DateTimeFormatter.ISO_DATE);
 		this.cardCount = JsonHelper.integerJsonResponse(jObject, "card_count");
 		this.digital = JsonHelper.booleanJsonResponse(jObject, "digital");
 		this.foilOnly = JsonHelper.booleanJsonResponse(jObject, "foil_only");

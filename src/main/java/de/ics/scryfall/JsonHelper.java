@@ -1,7 +1,9 @@
 package de.ics.scryfall;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +82,8 @@ public class JsonHelper {
 	protected static LocalDateTime localDateTimeJsonResponse(JsonObject jObject, String fieldName,
 			DateTimeFormatter dtf) {
 		try {
-			return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
+			return LocalDateTime.of(LocalDate.parse(jObject.get(fieldName).getAsString(), dtf), LocalTime.MIN);
+			//return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
 		} catch (Exception e) {
 			return LocalDateTime.now();
 		}
