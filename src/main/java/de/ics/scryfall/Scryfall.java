@@ -68,6 +68,15 @@ public class Scryfall {
 		return listSets;
 	}
 
+	/**
+	 * Returns a list of cards based on the given searchQuery. Includes all
+	 * languages and reprints.
+	 * 
+	 * @param searchQuery
+	 * @return {@code List<MtgCardInformation> listCardInformation}
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	public static List<MtgCardInformation> getCardByCustomSearch(String searchQuery)
 			throws IOException, InterruptedException {
 		List<MtgCardInformation> listCards = new ArrayList<>();
@@ -144,7 +153,7 @@ public class Scryfall {
 	}
 
 	/**
-	 * returns the response from the api as a jsonElement ready to parse.
+	 * Returns the response from the api as a jsonElement ready to parse.
 	 * 
 	 * @param urlString
 	 * @return {@code JsonElement jsonResponse}
@@ -169,7 +178,6 @@ public class Scryfall {
 	 * @throws IOException
 	 */
 	public static MtgSetInformation getSetByCode(String setCode) throws IOException {
-		List<MtgSetInformation> listSets = new ArrayList<>();
 		JsonObject result = apiConnection(SETS + setCode).getAsJsonObject();
 		return new MtgSetInformation(result);
 	}

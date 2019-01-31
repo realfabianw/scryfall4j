@@ -59,8 +59,8 @@ public class MtgSetInformation {
 		this.setCards = new HashSet<>();
 	}
 
-	public MtgSetInformation(String jsonString, String code, String name, String scryfallUri, String cardListUri, String setType,
-			LocalDateTime releaseDate, int cardCount, boolean digital, boolean foilOnly, String iconUri,
+	public MtgSetInformation(String jsonString, String code, String name, String scryfallUri, String cardListUri,
+			String setType, LocalDateTime releaseDate, int cardCount, boolean digital, boolean foilOnly, String iconUri,
 			Set<MtgCardInformation> setCards) {
 		this.jsonString = jsonString;
 		this.code = code;
@@ -188,6 +188,10 @@ public class MtgSetInformation {
 		return iconUri;
 	}
 
+	public String getJsonString() {
+		return jsonString;
+	}
+
 	/**
 	 * @return the name
 	 */
@@ -287,9 +291,5 @@ public class MtgSetInformation {
 				+ (releaseDate != null ? "releaseDate=" + releaseDate + ", " : "") + "cardCount=" + cardCount
 				+ ", digital=" + digital + ", foilOnly=" + foilOnly + ", "
 				+ (iconUri != null ? "iconUri=" + iconUri : "") + "]";
-	}
-
-	public String getJsonString() {
-		return jsonString;
 	}
 }

@@ -810,9 +810,9 @@ public class MtgCardInformation {
 				+ (listColorIdentities != null ? "listColorIdentities=" + listColorIdentities + ", " : "")
 				+ (listCardFaces != null ? "listCardFaces=" + listCardFaces + ", " : "")
 				+ (listRelatedCards != null ? "listRelatedCards=" + listRelatedCards + ", " : "")
-				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil=" + foilAvailable
-				+ ", nonFoil=" + nonFoilAvailable + ", oversized=" + oversized + ", reprint=" + reprint + ", "
-				+ (setCode != null ? "setCode=" + setCode + ", " : "")
+				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil="
+				+ foilAvailable + ", nonFoil=" + nonFoilAvailable + ", oversized=" + oversized + ", reprint=" + reprint
+				+ ", " + (setCode != null ? "setCode=" + setCode + ", " : "")
 				+ (setName != null ? "setName=" + setName + ", " : "")
 				+ (collectorNumber != null ? "collectorNumber=" + collectorNumber + ", " : "") + "digital=" + digital
 				+ ", " + (rarity != null ? "rarity=" + rarity + ", " : "")
