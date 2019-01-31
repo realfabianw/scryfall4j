@@ -87,6 +87,7 @@ public class MtgCardInformation {
 		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
 		this.layout = JsonHelper.stringJsonResponse(jObject, "layout");
 		this.imageUri = new HashMap<>();
+		try {
 		this.imageUri.put(ImageType.SMALL,
 				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
 		this.imageUri.put(ImageType.NORMAL,
@@ -99,6 +100,9 @@ public class MtgCardInformation {
 				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
 		this.imageUri.put(ImageType.BORDER_CROP,
 				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
+		} catch (NullPointerException npe) {
+			// TODO Exception einfügen
+		}
 		this.manaCost = JsonHelper.stringJsonResponse(jObject, "mana_cost");
 		this.cmc = JsonHelper.doubleJsonResponse(jObject, "cmc");
 		this.typeLine = JsonHelper.stringJsonResponse(jObject, "type_line");
