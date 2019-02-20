@@ -100,6 +100,39 @@ public class Scryfall {
 		}
 		return listCards;
 	}
+	
+	/**
+	 * Returns a list of cards based on the given searchQuery. Includes all
+	 * languages and reprints.
+	 * 
+	 * @param searchQuery
+	 * @return {@code List<MtgCardInformation> listCardInformation}
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static List<MtgCardInformation> getEnglishCardByCustomSearch(String searchQuery)
+			throws IOException, InterruptedException {
+		List<MtgCardInformation> listCards = new ArrayList<>();
+		JsonObject result = cardSearchQuery(searchQuery + " unique:prints").getAsJsonObject();
+
+		boolean hasMore = true;
+		String nextPage;
+		while (hasMore) {
+			hasMore = result.get("has_more").getAsBoolean();
+
+			JsonArray cardArray = result.get("data").getAsJsonArray();
+			for (JsonElement cardElement : cardArray) {
+				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
+			}
+
+			if (hasMore) {
+				nextPage = result.get("next_page").getAsString();
+				Thread.sleep(100);
+				result = getJsonResponse(nextPage).getAsJsonObject();
+			}
+		}
+		return listCards;
+	}
 
 	/**
 	 * Returns all prints of the given card in the correct language if the given
