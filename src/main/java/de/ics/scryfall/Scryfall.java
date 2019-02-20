@@ -153,6 +153,42 @@ public class Scryfall {
 	}
 
 	/**
+	 * Returns all prints of the given card in the correct language if the given
+	 * name is not english, or in all languages and all prints if the given name is
+	 * english.
+	 * 
+	 * @param cardName
+	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
+	 *          all languages)
+	 * @return {@code List<Card> listCards}
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static List<MtgCardInformation> getEnglishCardByName(String cardName)
+			throws IOException, InterruptedException {
+		List<MtgCardInformation> listCards = new ArrayList<>();
+		JsonObject result = cardSearchQuery(cardName + " unique:prints").getAsJsonObject();
+
+		boolean hasMore = true;
+		String nextPage;
+		while (hasMore) {
+			hasMore = result.get("has_more").getAsBoolean();
+
+			JsonArray cardArray = result.get("data").getAsJsonArray();
+			for (JsonElement cardElement : cardArray) {
+				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
+			}
+
+			if (hasMore) {
+				nextPage = result.get("next_page").getAsString();
+				Thread.sleep(100);
+				result = getJsonResponse(nextPage).getAsJsonObject();
+			}
+		}
+		return listCards;
+	}
+
+	/**
 	 * Returns the response from the api as a jsonElement ready to parse.
 	 * 
 	 * @param urlString

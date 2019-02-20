@@ -83,7 +83,7 @@ public class JsonHelper {
 			DateTimeFormatter dtf) {
 		try {
 			return LocalDateTime.of(LocalDate.parse(jObject.get(fieldName).getAsString(), dtf), LocalTime.MIN);
-			//return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
+			// return LocalDateTime.parse(jObject.get(fieldName).getAsString(), dtf);
 		} catch (Exception e) {
 			return LocalDateTime.now();
 		}

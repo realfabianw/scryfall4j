@@ -88,18 +88,18 @@ public class MtgCardInformation {
 		this.layout = JsonHelper.stringJsonResponse(jObject, "layout");
 		this.imageUri = new HashMap<>();
 		try {
-		this.imageUri.put(ImageType.SMALL,
-				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
-		this.imageUri.put(ImageType.NORMAL,
-				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
-		this.imageUri.put(ImageType.LARGE,
-				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
-		this.imageUri.put(ImageType.PNG,
-				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
-		this.imageUri.put(ImageType.ART_CROP,
-				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
-		this.imageUri.put(ImageType.BORDER_CROP,
-				JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
+			this.imageUri.put(ImageType.SMALL,
+					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
+			this.imageUri.put(ImageType.NORMAL,
+					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
+			this.imageUri.put(ImageType.LARGE,
+					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
+			this.imageUri.put(ImageType.PNG,
+					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
+			this.imageUri.put(ImageType.ART_CROP,
+					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
+			this.imageUri.put(ImageType.BORDER_CROP,
+					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
 		} catch (NullPointerException npe) {
 			// TODO Exception einfügen
 		}
