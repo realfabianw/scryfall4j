@@ -64,7 +64,7 @@ public class MtgCardInformation {
 	private String manaCost;
 	private String name;
 	private boolean nonFoilExists;
-	private String orcaleText;
+	private String oracleText;
 	private boolean oversized;
 	private String power;
 	private boolean reserved;
@@ -169,7 +169,7 @@ public class MtgCardInformation {
 		this.manaCost = JsonIO.parseString(jObject, "mana_cost");
 		this.name = JsonIO.parseString(jObject, "name");
 		this.nonFoilExists = JsonIO.parseBoolean(jObject, "nonfoil");
-		this.orcaleText = JsonIO.parseString(jObject, "oracle_text");
+		this.oracleText = JsonIO.parseString(jObject, "oracle_text");
 		this.oversized = JsonIO.parseBoolean(jObject, "oversized");
 		this.power = JsonIO.parseString(jObject, "power");
 		this.reserved = JsonIO.parseBoolean(jObject, "reserved");
@@ -239,7 +239,7 @@ public class MtgCardInformation {
 			List<RelatedCard> listAllParts, List<CardFace> listCardFaces, double cmc, List<Symbol> listColors,
 			List<Symbol> listColorIdentities, List<Symbol> listColorIndicators, int edhrecRank, boolean foilExists,
 			String handModifier, Layout layout, Map<PlayFormat, Legality> mapLegality, String lifeModifier,
-			String loyalty, String manaCost, String name, boolean nonFoilExists, String orcaleText, boolean oversized,
+			String loyalty, String manaCost, String name, boolean nonFoilExists, String oracleText, boolean oversized,
 			String power, boolean reserved, String toughness, String typeLine, String artist, BorderColor borderColor,
 			String collectorNumber, boolean digitalCard, String flavorText, FrameEffect frameEffect, Frame frame,
 			boolean fullArt, List<Game> listGames, boolean highResImageAvailable, String illustrationId,
@@ -276,7 +276,7 @@ public class MtgCardInformation {
 		this.manaCost = manaCost;
 		this.name = name;
 		this.nonFoilExists = nonFoilExists;
-		this.orcaleText = orcaleText;
+		this.oracleText = oracleText;
 		this.oversized = oversized;
 		this.power = power;
 		this.reserved = reserved;
@@ -466,10 +466,10 @@ public class MtgCardInformation {
 				return false;
 		} else if (!oracleId.equals(other.oracleId))
 			return false;
-		if (orcaleText == null) {
-			if (other.orcaleText != null)
+		if (oracleText == null) {
+			if (other.oracleText != null)
 				return false;
-		} else if (!orcaleText.equals(other.orcaleText))
+		} else if (!oracleText.equals(other.oracleText))
 			return false;
 		if (oversized != other.oversized)
 			return false;
@@ -705,8 +705,8 @@ public class MtgCardInformation {
 		return oracleId;
 	}
 
-	public String getOrcaleText() {
-		return orcaleText;
+	public String getOracleText() {
+		return oracleText;
 	}
 
 	public String getPower() {
@@ -829,7 +829,7 @@ public class MtgCardInformation {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + (nonFoilExists ? 1231 : 1237);
 		result = prime * result + ((oracleId == null) ? 0 : oracleId.hashCode());
-		result = prime * result + ((orcaleText == null) ? 0 : orcaleText.hashCode());
+		result = prime * result + ((oracleText == null) ? 0 : oracleText.hashCode());
 		result = prime * result + (oversized ? 1231 : 1237);
 		result = prime * result + ((power == null) ? 0 : power.hashCode());
 		result = prime * result + ((printedName == null) ? 0 : printedName.hashCode());
@@ -1049,8 +1049,8 @@ public class MtgCardInformation {
 		this.oracleId = oracleId;
 	}
 
-	public void setOrcaleText(String orcaleText) {
-		this.orcaleText = orcaleText;
+	public void setOracleText(String oracleText) {
+		this.oracleText = oracleText;
 	}
 
 	public void setOversized(boolean oversized) {
@@ -1173,7 +1173,7 @@ public class MtgCardInformation {
 				+ (loyalty != null ? "loyalty=" + loyalty + ", " : "")
 				+ (manaCost != null ? "manaCost=" + manaCost + ", " : "") + (name != null ? "name=" + name + ", " : "")
 				+ "nonFoilExists=" + nonFoilExists + ", "
-				+ (orcaleText != null ? "orcaleText=" + orcaleText + ", " : "") + "oversized=" + oversized + ", "
+				+ (oracleText != null ? "oracleText=" + oracleText + ", " : "") + "oversized=" + oversized + ", "
 				+ (power != null ? "power=" + power + ", " : "") + "reserved=" + reserved + ", "
 				+ (toughness != null ? "toughness=" + toughness + ", " : "")
 				+ (typeLine != null ? "typeLine=" + typeLine + ", " : "")
