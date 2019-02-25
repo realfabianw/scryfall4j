@@ -115,6 +115,41 @@ public class Scryfall {
 	}
 
 	/**
+	 * @see https://scryfall.com/docs/api/cards/search
+	 * @param searchQuery
+	 * @param includeAllLanguages
+	 * @param includeReprints
+	 * @return {@code List<MtgCardInformation> listCards}
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static List<MtgCardInformation> getListCardsBySet(MtgSetInformation mtgSetInformation)
+			throws IOException, InterruptedException {
+		List<MtgCardInformation> listCards = new ArrayList<>();
+		boolean firstIteration = true;
+		boolean hasMore = false;
+		URL nextPage = new URL(mtgSetInformation.getSearchApiUrl());
+		do {
+			if (!firstIteration) {
+				Thread.sleep(100);
+			} else {
+				firstIteration = false;
+			}
+			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
+			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
+			try {
+				nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
+			} catch (MalformedURLException e) {
+
+			}
+			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
+				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
+			}
+		} while (hasMore);
+		return listCards;
+	}
+
+	/**
 	 * @see https://scryfall.com/docs/api/sets/code
 	 * @param setCode
 	 * @return {@code MtgSetInformation mtgSetInformation}
