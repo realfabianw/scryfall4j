@@ -136,8 +136,12 @@ public class MtgCardInformation {
 		}
 		this.cmc = JsonIO.parseDouble(jObject, "cmc");
 		this.listColors = new ArrayList<>();
-		for (JsonElement jElement : jObject.get("colors").getAsJsonArray()) {
-			listColors.add(Symbol.parseId(jElement.getAsString()));
+		try {
+			for (JsonElement jElement : jObject.get("colors").getAsJsonArray()) {
+				listColors.add(Symbol.parseId(jElement.getAsString()));
+			}
+		} catch (NullPointerException e) {
+
 		}
 		this.listColorIdentities = new ArrayList<>();
 		for (JsonElement jElement : jObject.get("color_identity").getAsJsonArray()) {
@@ -191,9 +195,13 @@ public class MtgCardInformation {
 		this.highResImageAvailable = JsonIO.parseBoolean(jObject, "highres_image");
 		this.illustrationId = JsonIO.parseString(jObject, "illustration_id");
 		this.mapImageUrls = new HashMap<>();
-		for (String key : jObject.get("image_uris").getAsJsonObject().keySet()) {
-			mapImageUrls.put(ImageType.parseId(key),
-					JsonIO.parseString(jObject.get("image_uris").getAsJsonObject(), key));
+		try {
+			for (String key : jObject.get("image_uris").getAsJsonObject().keySet()) {
+				mapImageUrls.put(ImageType.parseId(key),
+						JsonIO.parseString(jObject.get("image_uris").getAsJsonObject(), key));
+			}
+		} catch (NullPointerException e) {
+
 		}
 		this.mapPricing = new HashMap<>();
 		for (String key : jObject.get("prices").getAsJsonObject().keySet()) {
