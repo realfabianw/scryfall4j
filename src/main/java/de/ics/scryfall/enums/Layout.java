@@ -1,7 +1,7 @@
 package de.ics.scryfall.enums;
 
 /**
- * This Enum contains all card layouts as of 23.02.2019
+ * This enum contains all card layouts as of february 2019
  * 
  * @see https://scryfall.com/docs/api/layouts
  * @author QUE
@@ -25,6 +25,7 @@ public enum Layout {
 		}
 		throw new IllegalArgumentException("Couldn't find an enum matching this value: " + id);
 	}
+
 	private final String id;
 
 	private final String description;

@@ -1,7 +1,7 @@
 package de.ics.scryfall.enums;
 
 /**
- * This Enum contains all border colors as of 23.02.2019
+ * This enum contains all related site as of february 2019
  * 
  * @see https://scryfall.com/docs/api/cards
  * @author QUE
