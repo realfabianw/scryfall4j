@@ -1,225 +1,309 @@
 package de.ics.scryfall;
 
-import java.awt.Image;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.imageio.ImageIO;
-
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.neovisionaries.i18n.LanguageCode;
+
+import de.ics.scryfall.enums.BorderColor;
+import de.ics.scryfall.enums.Symbol;
+import de.ics.scryfall.enums.Frame;
+import de.ics.scryfall.enums.FrameEffect;
+import de.ics.scryfall.enums.Game;
+import de.ics.scryfall.enums.ImageType;
+import de.ics.scryfall.enums.Layout;
+import de.ics.scryfall.enums.Legality;
+import de.ics.scryfall.enums.PlayFormat;
+import de.ics.scryfall.enums.PriceType;
+import de.ics.scryfall.enums.Rarity;
+import de.ics.scryfall.enums.RelatedSite;
 
 /**
- * This class tries to implement the data-structure for all available MTG
- * card-layouts. Currently supported card types:
+ * MtgCardInformation represents an "Magic: The Gathering"-Card as it is stored
+ * on the scryfall database.
  * 
- * @see (normal cards - any language):
- *      https://scryfall.com/card/a25/141?utm_source
- * @see (flip cards - any language): https://scryfall.com/card/chk/2
- * @see (transform cards - any language): https://scryfall.com/card/dka/50/de
- * @see (split cards - any language): https://scryfall.com/card/dis/153
- * @see (meld cards - any language):
- *      https://scryfall.com/card/emn/96b?utm_source=mw_MTGWiki
+ * @see https://scryfall.com/docs/api/cards
  * @author QUE
  *
  */
 public class MtgCardInformation {
-	private final String jsonString;
-	private final String uniqueId;
-	private final String oracleId;
-	private final String name;
-	private final String printedName;
-	private final String languageCode;
-	private final String scryfallUri;
-	private final String layout;
-	private final Map<ImageType, String> imageUri;
-	private final String manaCost;
-	private final double cmc;
-	private final String typeLine;
-	private final String printedTypeLine;
-	private final String oracleText;
-	private final String printedText;
-	private final String power;
-	private final String toughness;
-	private final List<String> listColors;
-	private final List<String> listColorIdentities;
-	private final List<CardFace> listCardFaces;
-	private final List<RelatedCard> listRelatedCards;
-	private Legality legality;
-	private final boolean reserved;
-	private final boolean foilAvailable;
-	private final boolean nonFoilAvailable;
-	private final boolean oversized;
-	private final boolean reprint;
-	private final String setCode;
-	private final String setName;
-	private final String collectorNumber;
-	private final boolean digital;
-	private final String rarity;
-	private final String illustrationId;
-	private final String watermark;
-	private final String flavorText;
-	private final String artist;
-	private final String frame;
-	private final boolean fullArt;
-	private final String borderColor;
-	private final boolean timeshifted;
-	private final boolean colorshifted;
-	private final boolean futureshifted;
+	private String jsonString;
+	private String id;
+	private int arenaId;
+	private int mtgoId;
+	private int mtgoFoilId;
+	private List<Integer> listMultiverseIds;
+	private int tcgPlayerId;
+	private String oracleId;
+	private LanguageCode languageCode;
+	private String printsApiSearchUrl;
+	private String rulingsApiUrl;
+	private String selfScryfallUrl;
+	private String selfApiUrl;
+
+	private List<RelatedCard> listAllParts;
+	private List<CardFace> listCardFaces;
+	private double cmc;
+	private List<Symbol> listColors;
+	private List<Symbol> listColorIdentities;
+	private List<Symbol> listColorIndicators;
 	private int edhrecRank;
-	private BigDecimal priceUsd;
-	private BigDecimal priceEur;
-	private BigDecimal priceTix;
-	private Set<Link> setLinks;
+	private boolean foilExists;
+	private String handModifier;
+	private Layout layout;
+	private Map<PlayFormat, Legality> mapLegality;
+	private String lifeModifier;
+	private String loyalty;
+	private String manaCost;
+	private String name;
+	private boolean nonFoilExists;
+	private String orcaleText;
+	private boolean oversized;
+	private String power;
+	private boolean reserved;
+	private String toughness;
+	private String typeLine;
+
+	private String artist;
+	private BorderColor borderColor;
+	private String collectorNumber;
+	private boolean digitalCard;
+	private String flavorText;
+	private FrameEffect frameEffect;
+	private Frame frame;
+	private boolean fullArt;
+	private List<Game> listGames;
+	private boolean highResImageAvailable;
+	private String illustrationId;
+	private Map<ImageType, String> mapImageUrls;
+	private Map<PriceType, BigDecimal> mapPricing;
+	private String printedName;
+	private String printedText;
+	private String printedTypeLine;
+	private boolean promo;
+	private Map<RelatedSite, String> mapRelatedUrls;
+	private Rarity rarity;
+	private LocalDate releaseDate;
+	private boolean reprint;
+	private String setScryfallUrl;
+	private String setName;
+	private String setApiSearchUrl;
+	private String setApiUrl;
+	private String setCode;
+	private boolean storySpotlight;
+	private String watermark;
 
 	public MtgCardInformation(JsonObject jObject) {
 		this.jsonString = jObject.toString();
-		this.uniqueId = JsonHelper.stringJsonResponse(jObject, "id");
-		this.oracleId = JsonHelper.stringJsonResponse(jObject, "oracle_id");
-		this.name = JsonHelper.stringJsonResponse(jObject, "name");
-		this.printedName = JsonHelper.stringJsonResponse(jObject, "printed_name");
-		this.languageCode = JsonHelper.stringJsonResponse(jObject, "lang");
-		this.scryfallUri = JsonHelper.stringJsonResponse(jObject, "scryfall_uri");
-		this.layout = JsonHelper.stringJsonResponse(jObject, "layout");
-		this.imageUri = new HashMap<>();
-		try {
-			this.imageUri.put(ImageType.SMALL,
-					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "small"));
-			this.imageUri.put(ImageType.NORMAL,
-					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "normal"));
-			this.imageUri.put(ImageType.LARGE,
-					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "large"));
-			this.imageUri.put(ImageType.PNG,
-					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "png"));
-			this.imageUri.put(ImageType.ART_CROP,
-					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "art_crop"));
-			this.imageUri.put(ImageType.BORDER_CROP,
-					JsonHelper.stringJsonResponse(jObject.get("image_uris").getAsJsonObject(), "border_crop"));
-		} catch (NullPointerException npe) {
-			// TODO Exception einfügen
+		this.id = JsonIO.parseString(jObject, "id");
+		this.arenaId = JsonIO.parseInteger(jObject, "arena_id");
+		this.mtgoId = JsonIO.parseInteger(jObject, "mtgo_id");
+		this.mtgoFoilId = JsonIO.parseInteger(jObject, "mtgo_foil_id");
+		this.listMultiverseIds = new ArrayList<>();
+		for (JsonElement jElement : jObject.get("multiverse_ids").getAsJsonArray()) {
+			listMultiverseIds.add(jElement.getAsInt());
 		}
-		this.manaCost = JsonHelper.stringJsonResponse(jObject, "mana_cost");
-		this.cmc = JsonHelper.doubleJsonResponse(jObject, "cmc");
-		this.typeLine = JsonHelper.stringJsonResponse(jObject, "type_line");
-		this.printedTypeLine = JsonHelper.stringJsonResponse(jObject, "printed_type_line");
-		this.oracleText = JsonHelper.stringJsonResponse(jObject, "oracle_text");
-		this.printedText = JsonHelper.stringJsonResponse(jObject, "printed_text");
-		this.power = JsonHelper.stringJsonResponse(jObject, "power");
-		this.toughness = JsonHelper.stringJsonResponse(jObject, "toughness");
-		this.listColors = JsonHelper.listStringJsonResponse(jObject, "colors");
-		this.listColorIdentities = JsonHelper.listStringJsonResponse(jObject, "color_identity");
-		this.listCardFaces = JsonHelper.parseListCardFaces(jObject, "card_faces");
-		this.listRelatedCards = JsonHelper.parseListRelatedCards(jObject, "all_parts");
-		this.legality = JsonHelper.parseLegalities(jObject, "legalities");
-		this.reserved = JsonHelper.booleanJsonResponse(jObject, "reserved");
-		this.foilAvailable = JsonHelper.booleanJsonResponse(jObject, "foil");
-		this.nonFoilAvailable = JsonHelper.booleanJsonResponse(jObject, "nonfoil");
-		this.oversized = JsonHelper.booleanJsonResponse(jObject, "oversized");
-		this.reprint = JsonHelper.booleanJsonResponse(jObject, "reprint");
-		this.setCode = JsonHelper.stringJsonResponse(jObject, "set");
-		this.setName = JsonHelper.stringJsonResponse(jObject, "set_name");
-		this.collectorNumber = JsonHelper.stringJsonResponse(jObject, "collector_number");
-		this.digital = JsonHelper.booleanJsonResponse(jObject, "digital");
-		this.rarity = JsonHelper.stringJsonResponse(jObject, "rarity");
-		this.illustrationId = JsonHelper.stringJsonResponse(jObject, "illustration_id");
-		this.watermark = JsonHelper.stringJsonResponse(jObject, "watermark");
-		this.flavorText = JsonHelper.stringJsonResponse(jObject, "flavor_text");
-		this.artist = JsonHelper.stringJsonResponse(jObject, "artist");
-		this.frame = JsonHelper.stringJsonResponse(jObject, "frame");
-		this.fullArt = JsonHelper.booleanJsonResponse(jObject, "full_art");
-		this.borderColor = JsonHelper.stringJsonResponse(jObject, "border_color");
-		this.timeshifted = JsonHelper.booleanJsonResponse(jObject, "timeshifted");
-		this.colorshifted = JsonHelper.booleanJsonResponse(jObject, "colorshifted");
-		this.futureshifted = JsonHelper.booleanJsonResponse(jObject, "futureshifted");
-		this.edhrecRank = JsonHelper.integerJsonResponse(jObject, "edhrec_rank");
-		this.priceUsd = JsonHelper.bigDecimalJsonResponse(jObject, "usd");
-		this.priceEur = JsonHelper.bigDecimalJsonResponse(jObject, "eur");
-		this.priceTix = JsonHelper.bigDecimalJsonResponse(jObject, "tix");
-		this.setLinks = new HashSet<>();
-		this.setLinks.add(new Link("Gatherer",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "gatherer")));
-		this.setLinks.add(new Link("TCGPlayer Decks",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "tcgplayer_decks")));
-		this.setLinks.add(new Link("EDHREC",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "edhrec")));
-		this.setLinks.add(new Link("MTGTOP8",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "mtgtop8")));
-		this.setLinks.add(new Link("TCGPlayer",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "tcgplayer")));
-		this.setLinks.add(new Link("Cardmarket",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "cardmarket")));
-		this.setLinks.add(new Link("Cardhoarder",
-				JsonHelper.stringJsonResponse(jObject.get("related_uris").getAsJsonObject(), "cardhoarder")));
+		this.tcgPlayerId = JsonIO.parseInteger(jObject, "tcgplayer_id");
+		this.oracleId = JsonIO.parseString(jObject, "oracle_id");
+		this.languageCode = LanguageCode.getByCode(JsonIO.parseString(jObject, "lang"));
+		this.printsApiSearchUrl = JsonIO.parseString(jObject, "prints_search_uri");
+		this.rulingsApiUrl = JsonIO.parseString(jObject, "rulings_uri");
+		this.selfScryfallUrl = JsonIO.parseString(jObject, "scryfall_uri");
+		this.selfApiUrl = JsonIO.parseString(jObject, "uri");
+
+		this.listAllParts = new ArrayList<>();
+		try {
+			for (JsonElement jElement : jObject.get("all_parts").getAsJsonArray()) {
+				listAllParts.add(new RelatedCard(jElement.getAsJsonObject()));
+			}
+		} catch (NullPointerException e) {
+
+		}
+		this.listCardFaces = new ArrayList<>();
+		try {
+			for (JsonElement jElement : jObject.get("card_faces").getAsJsonArray()) {
+				listCardFaces.add(new CardFace(jElement.getAsJsonObject()));
+			}
+		} catch (NullPointerException e) {
+
+		}
+		this.cmc = JsonIO.parseDouble(jObject, "cmc");
+		this.listColors = new ArrayList<>();
+		for (JsonElement jElement : jObject.get("colors").getAsJsonArray()) {
+			listColors.add(Symbol.parseId(jElement.getAsString()));
+		}
+		this.listColorIdentities = new ArrayList<>();
+		for (JsonElement jElement : jObject.get("color_identity").getAsJsonArray()) {
+			listColorIdentities.add(Symbol.parseId(jElement.getAsString()));
+		}
+		this.listColorIndicators = new ArrayList<>();
+		try {
+			for (JsonElement jElement : jObject.get("color_indicator").getAsJsonArray()) {
+				listColorIndicators.add(Symbol.parseId(jElement.getAsString()));
+			}
+		} catch (NullPointerException e) {
+
+		}
+		this.edhrecRank = JsonIO.parseInteger(jObject, "edhrec_rank");
+		this.foilExists = JsonIO.parseBoolean(jObject, "foil");
+		this.handModifier = JsonIO.parseString(jObject, "hand_modifier");
+		this.layout = Layout.parseId(JsonIO.parseString(jObject, "layout"));
+		this.mapLegality = new HashMap<>();
+		for (String key : jObject.get("legalities").getAsJsonObject().keySet()) {
+			mapLegality.put(PlayFormat.parseId(key),
+					Legality.parseId(JsonIO.parseString(jObject.get("legalities").getAsJsonObject(), key)));
+		}
+		this.lifeModifier = JsonIO.parseString(jObject, "life_modifier");
+		this.loyalty = JsonIO.parseString(jObject, "loyality");
+		this.manaCost = JsonIO.parseString(jObject, "mana_cost");
+		this.name = JsonIO.parseString(jObject, "name");
+		this.nonFoilExists = JsonIO.parseBoolean(jObject, "nonfoil");
+		this.orcaleText = JsonIO.parseString(jObject, "oracle_text");
+		this.oversized = JsonIO.parseBoolean(jObject, "oversized");
+		this.power = JsonIO.parseString(jObject, "power");
+		this.reserved = JsonIO.parseBoolean(jObject, "reserved");
+		this.toughness = JsonIO.parseString(jObject, "toughness");
+		this.typeLine = JsonIO.parseString(jObject, "type_line");
+
+		this.artist = JsonIO.parseString(jObject, "artist");
+		this.borderColor = BorderColor.parseId(JsonIO.parseString(jObject, "border_color"));
+		this.collectorNumber = JsonIO.parseString(jObject, "collector_number");
+		this.digitalCard = JsonIO.parseBoolean(jObject, "digital");
+		this.flavorText = JsonIO.parseString(jObject, "flavor_text");
+		try {
+			this.frameEffect = FrameEffect.parseId(JsonIO.parseString(jObject, "frame_effect"));
+		} catch (IllegalArgumentException e) {
+			this.frameEffect = null;
+		}
+		this.frame = Frame.parseId(JsonIO.parseString(jObject, "frame"));
+		this.fullArt = JsonIO.parseBoolean(jObject, "full_art");
+		this.listGames = new ArrayList<>();
+		for (JsonElement jElement : jObject.get("games").getAsJsonArray()) {
+			listGames.add(Game.parseId(jElement.getAsString()));
+		}
+		this.highResImageAvailable = JsonIO.parseBoolean(jObject, "highres_image");
+		this.illustrationId = JsonIO.parseString(jObject, "illustration_id");
+		this.mapImageUrls = new HashMap<>();
+		for (String key : jObject.get("image_uris").getAsJsonObject().keySet()) {
+			mapImageUrls.put(ImageType.parseId(key),
+					JsonIO.parseString(jObject.get("image_uris").getAsJsonObject(), key));
+		}
+		this.mapPricing = new HashMap<>();
+		for (String key : jObject.get("prices").getAsJsonObject().keySet()) {
+			mapPricing.put(PriceType.parseId(key),
+					JsonIO.parseBigDecimal(jObject.get("prices").getAsJsonObject(), key));
+		}
+		this.printedName = JsonIO.parseString(jObject, "printed_name");
+		this.printedText = JsonIO.parseString(jObject, "printed_text");
+		this.printedTypeLine = JsonIO.parseString(jObject, "printed_type_line");
+		this.promo = JsonIO.parseBoolean(jObject, "promo");
+		this.mapRelatedUrls = new HashMap<>();
+		for (String key : jObject.get("purchase_uris").getAsJsonObject().keySet()) {
+			mapRelatedUrls.put(RelatedSite.parseId(key),
+					JsonIO.parseString(jObject.get("related_uris").getAsJsonObject(), key));
+		}
+		this.rarity = Rarity.parseId(JsonIO.parseString(jObject, "rarity"));
+		for (String key : jObject.get("related_uris").getAsJsonObject().keySet()) {
+			mapRelatedUrls.put(RelatedSite.parseId(key),
+					JsonIO.parseString(jObject.get("related_uris").getAsJsonObject(), key));
+		}
+		this.releaseDate = JsonIO.parseLocalDate(jObject, "released_at", DateTimeFormatter.ISO_DATE);
+		this.reprint = JsonIO.parseBoolean(jObject, "reprint");
+		this.setScryfallUrl = JsonIO.parseString(jObject, "scryfall_set_uri");
+		this.setName = JsonIO.parseString(jObject, "set_name");
+		this.setApiSearchUrl = JsonIO.parseString(jObject, "set_search_uri");
+		this.setApiUrl = JsonIO.parseString(jObject, "set_uri");
+		this.setCode = JsonIO.parseString(jObject, "set");
+		this.storySpotlight = JsonIO.parseBoolean(jObject, "story_spotlight");
+		this.watermark = JsonIO.parseString(jObject, "watermark");
 	}
 
-	public MtgCardInformation(String jsonString, String uniqueId, String oracleId, String name, String printedName,
-			String languageCode, String scryfallUri, String layout, Map<ImageType, String> imageUri, String manaCost,
-			double cmc, String typeLine, String printedTypeLine, String oracleText, String printedText, String power,
-			String toughness, List<String> listColors, List<String> listColorIdentities, List<CardFace> listCardFaces,
-			List<RelatedCard> listRelatedCards, Legality legality, boolean reserved, boolean foil, boolean nonFoil,
-			boolean oversized, boolean reprint, String setCode, String setName, String collectorNumber, boolean digital,
-			String rarity, String illustrationId, String watermark, String flavorText, String artist, String frame,
-			boolean fullArt, String borderColor, boolean timeshifted, boolean colorshifted, boolean futureshifted,
-			int edhrecRank, BigDecimal priceUsd, BigDecimal priceEur, BigDecimal priceTix, Set<Link> links) {
+	public MtgCardInformation(String jsonString, String id, int arenaId, int mtgoId, int mtgoFoilId,
+			List<Integer> listMultiverseIds, int tcgPlayerId, String oracleId, LanguageCode languageCode,
+			String printsApiSearchUrl, String rulingsApiUrl, String selfScryfallUrl, String selfApiUrl,
+			List<RelatedCard> listAllParts, List<CardFace> listCardFaces, double cmc, List<Symbol> listColors,
+			List<Symbol> listColorIdentities, List<Symbol> listColorIndicators, int edhrecRank, boolean foilExists,
+			String handModifier, Layout layout, Map<PlayFormat, Legality> mapLegality, String lifeModifier,
+			String loyalty, String manaCost, String name, boolean nonFoilExists, String orcaleText, boolean oversized,
+			String power, boolean reserved, String toughness, String typeLine, String artist, BorderColor borderColor,
+			String collectorNumber, boolean digitalCard, String flavorText, FrameEffect frameEffect, Frame frame,
+			boolean fullArt, List<Game> listGames, boolean highResImageAvailable, String illustrationId,
+			Map<ImageType, String> mapImageUrls, Map<PriceType, BigDecimal> mapPricing, String printedName,
+			String printedText, String printedTypeLine, boolean promo, Map<RelatedSite, String> mapRelatedUrls,
+			Rarity rarity, LocalDate releaseDate, boolean reprint, String setScryfallUrl, String setName,
+			String setApiSearchUrl, String setApiUrl, String setCode, boolean storySpotlight, String watermark) {
 		this.jsonString = jsonString;
-		this.uniqueId = uniqueId;
+		this.id = id;
+		this.arenaId = arenaId;
+		this.mtgoId = mtgoId;
+		this.mtgoFoilId = mtgoFoilId;
+		this.listMultiverseIds = listMultiverseIds;
+		this.tcgPlayerId = tcgPlayerId;
 		this.oracleId = oracleId;
-		this.name = name;
-		this.printedName = printedName;
 		this.languageCode = languageCode;
-		this.scryfallUri = scryfallUri;
-		this.layout = layout;
-		this.imageUri = imageUri;
-		this.manaCost = manaCost;
+		this.printsApiSearchUrl = printsApiSearchUrl;
+		this.rulingsApiUrl = rulingsApiUrl;
+		this.selfScryfallUrl = selfScryfallUrl;
+		this.selfApiUrl = selfApiUrl;
+		this.listAllParts = listAllParts;
+		this.listCardFaces = listCardFaces;
 		this.cmc = cmc;
-		this.typeLine = typeLine;
-		this.printedTypeLine = printedTypeLine;
-		this.oracleText = oracleText;
-		this.printedText = printedText;
-		this.power = power;
-		this.toughness = toughness;
 		this.listColors = listColors;
 		this.listColorIdentities = listColorIdentities;
-		this.listCardFaces = listCardFaces;
-		this.listRelatedCards = listRelatedCards;
-		this.legality = legality;
-		this.reserved = reserved;
-		this.foilAvailable = foil;
-		this.nonFoilAvailable = nonFoil;
+		this.listColorIndicators = listColorIndicators;
+		this.edhrecRank = edhrecRank;
+		this.foilExists = foilExists;
+		this.handModifier = handModifier;
+		this.layout = layout;
+		this.mapLegality = mapLegality;
+		this.lifeModifier = lifeModifier;
+		this.loyalty = loyalty;
+		this.manaCost = manaCost;
+		this.name = name;
+		this.nonFoilExists = nonFoilExists;
+		this.orcaleText = orcaleText;
 		this.oversized = oversized;
-		this.reprint = reprint;
-		this.setCode = setCode;
-		this.setName = setName;
-		this.collectorNumber = collectorNumber;
-		this.digital = digital;
-		this.rarity = rarity;
-		this.illustrationId = illustrationId;
-		this.watermark = watermark;
-		this.flavorText = flavorText;
+		this.power = power;
+		this.reserved = reserved;
+		this.toughness = toughness;
+		this.typeLine = typeLine;
 		this.artist = artist;
+		this.borderColor = borderColor;
+		this.collectorNumber = collectorNumber;
+		this.digitalCard = digitalCard;
+		this.flavorText = flavorText;
+		this.frameEffect = frameEffect;
 		this.frame = frame;
 		this.fullArt = fullArt;
-		this.borderColor = borderColor;
-		this.timeshifted = timeshifted;
-		this.colorshifted = colorshifted;
-		this.futureshifted = futureshifted;
-		this.edhrecRank = edhrecRank;
-		this.priceUsd = priceUsd;
-		this.priceEur = priceEur;
-		this.priceTix = priceTix;
-		this.setLinks = links;
+		this.listGames = listGames;
+		this.highResImageAvailable = highResImageAvailable;
+		this.illustrationId = illustrationId;
+		this.mapImageUrls = mapImageUrls;
+		this.mapPricing = mapPricing;
+		this.printedName = printedName;
+		this.printedText = printedText;
+		this.printedTypeLine = printedTypeLine;
+		this.promo = promo;
+		this.mapRelatedUrls = mapRelatedUrls;
+		this.rarity = rarity;
+		this.releaseDate = releaseDate;
+		this.reprint = reprint;
+		this.setScryfallUrl = setScryfallUrl;
+		this.setName = setName;
+		this.setApiSearchUrl = setApiSearchUrl;
+		this.setApiUrl = setApiUrl;
+		this.setCode = setCode;
+		this.storySpotlight = storySpotlight;
+		this.watermark = watermark;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -229,15 +313,14 @@ public class MtgCardInformation {
 		if (getClass() != obj.getClass())
 			return false;
 		MtgCardInformation other = (MtgCardInformation) obj;
+		if (arenaId != other.arenaId)
+			return false;
 		if (artist == null) {
 			if (other.artist != null)
 				return false;
 		} else if (!artist.equals(other.artist))
 			return false;
-		if (borderColor == null) {
-			if (other.borderColor != null)
-				return false;
-		} else if (!borderColor.equals(other.borderColor))
+		if (borderColor != other.borderColor)
 			return false;
 		if (Double.doubleToLongBits(cmc) != Double.doubleToLongBits(other.cmc))
 			return false;
@@ -246,45 +329,58 @@ public class MtgCardInformation {
 				return false;
 		} else if (!collectorNumber.equals(other.collectorNumber))
 			return false;
-		if (colorshifted != other.colorshifted)
+		if (digitalCard != other.digitalCard)
 			return false;
-		if (digital != other.digital)
+		if (edhrecRank != other.edhrecRank)
 			return false;
 		if (flavorText == null) {
 			if (other.flavorText != null)
 				return false;
 		} else if (!flavorText.equals(other.flavorText))
 			return false;
-		if (foilAvailable != other.foilAvailable)
+		if (foilExists != other.foilExists)
 			return false;
-		if (frame == null) {
-			if (other.frame != null)
-				return false;
-		} else if (!frame.equals(other.frame))
+		if (frame != other.frame)
+			return false;
+		if (frameEffect != other.frameEffect)
 			return false;
 		if (fullArt != other.fullArt)
 			return false;
-		if (futureshifted != other.futureshifted)
+		if (handModifier == null) {
+			if (other.handModifier != null)
+				return false;
+		} else if (!handModifier.equals(other.handModifier))
+			return false;
+		if (highResImageAvailable != other.highResImageAvailable)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
 			return false;
 		if (illustrationId == null) {
 			if (other.illustrationId != null)
 				return false;
 		} else if (!illustrationId.equals(other.illustrationId))
 			return false;
-		if (imageUri == null) {
-			if (other.imageUri != null)
+		if (jsonString == null) {
+			if (other.jsonString != null)
 				return false;
-		} else if (!imageUri.equals(other.imageUri))
+		} else if (!jsonString.equals(other.jsonString))
 			return false;
-		if (languageCode == null) {
-			if (other.languageCode != null)
-				return false;
-		} else if (!languageCode.equals(other.languageCode))
+		if (languageCode != other.languageCode)
 			return false;
-		if (layout == null) {
-			if (other.layout != null)
+		if (layout != other.layout)
+			return false;
+		if (lifeModifier == null) {
+			if (other.lifeModifier != null)
 				return false;
-		} else if (!layout.equals(other.layout))
+		} else if (!lifeModifier.equals(other.lifeModifier))
+			return false;
+		if (listAllParts == null) {
+			if (other.listAllParts != null)
+				return false;
+		} else if (!listAllParts.equals(other.listAllParts))
 			return false;
 		if (listCardFaces == null) {
 			if (other.listCardFaces != null)
@@ -296,42 +392,76 @@ public class MtgCardInformation {
 				return false;
 		} else if (!listColorIdentities.equals(other.listColorIdentities))
 			return false;
+		if (listColorIndicators == null) {
+			if (other.listColorIndicators != null)
+				return false;
+		} else if (!listColorIndicators.equals(other.listColorIndicators))
+			return false;
 		if (listColors == null) {
 			if (other.listColors != null)
 				return false;
 		} else if (!listColors.equals(other.listColors))
 			return false;
-		if (legality == null) {
-			if (other.legality != null)
+		if (listGames == null) {
+			if (other.listGames != null)
 				return false;
-		} else if (!legality.equals(other.legality))
+		} else if (!listGames.equals(other.listGames))
 			return false;
-		if (listRelatedCards == null) {
-			if (other.listRelatedCards != null)
+		if (listMultiverseIds == null) {
+			if (other.listMultiverseIds != null)
 				return false;
-		} else if (!listRelatedCards.equals(other.listRelatedCards))
+		} else if (!listMultiverseIds.equals(other.listMultiverseIds))
+			return false;
+		if (loyalty == null) {
+			if (other.loyalty != null)
+				return false;
+		} else if (!loyalty.equals(other.loyalty))
 			return false;
 		if (manaCost == null) {
 			if (other.manaCost != null)
 				return false;
 		} else if (!manaCost.equals(other.manaCost))
 			return false;
+		if (mapImageUrls == null) {
+			if (other.mapImageUrls != null)
+				return false;
+		} else if (!mapImageUrls.equals(other.mapImageUrls))
+			return false;
+		if (mapLegality == null) {
+			if (other.mapLegality != null)
+				return false;
+		} else if (!mapLegality.equals(other.mapLegality))
+			return false;
+		if (mapPricing == null) {
+			if (other.mapPricing != null)
+				return false;
+		} else if (!mapPricing.equals(other.mapPricing))
+			return false;
+		if (mapRelatedUrls == null) {
+			if (other.mapRelatedUrls != null)
+				return false;
+		} else if (!mapRelatedUrls.equals(other.mapRelatedUrls))
+			return false;
+		if (mtgoFoilId != other.mtgoFoilId)
+			return false;
+		if (mtgoId != other.mtgoId)
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-		if (nonFoilAvailable != other.nonFoilAvailable)
+		if (nonFoilExists != other.nonFoilExists)
 			return false;
 		if (oracleId == null) {
 			if (other.oracleId != null)
 				return false;
 		} else if (!oracleId.equals(other.oracleId))
 			return false;
-		if (oracleText == null) {
-			if (other.oracleText != null)
+		if (orcaleText == null) {
+			if (other.orcaleText != null)
 				return false;
-		} else if (!oracleText.equals(other.oracleText))
+		} else if (!orcaleText.equals(other.orcaleText))
 			return false;
 		if (oversized != other.oversized)
 			return false;
@@ -355,26 +485,67 @@ public class MtgCardInformation {
 				return false;
 		} else if (!printedTypeLine.equals(other.printedTypeLine))
 			return false;
-		if (rarity == null) {
-			if (other.rarity != null)
+		if (printsApiSearchUrl == null) {
+			if (other.printsApiSearchUrl != null)
 				return false;
-		} else if (!rarity.equals(other.rarity))
+		} else if (!printsApiSearchUrl.equals(other.printsApiSearchUrl))
+			return false;
+		if (promo != other.promo)
+			return false;
+		if (rarity != other.rarity)
+			return false;
+		if (releaseDate == null) {
+			if (other.releaseDate != null)
+				return false;
+		} else if (!releaseDate.equals(other.releaseDate))
 			return false;
 		if (reprint != other.reprint)
 			return false;
 		if (reserved != other.reserved)
 			return false;
-		if (scryfallUri == null) {
-			if (other.scryfallUri != null)
+		if (rulingsApiUrl == null) {
+			if (other.rulingsApiUrl != null)
 				return false;
-		} else if (!scryfallUri.equals(other.scryfallUri))
+		} else if (!rulingsApiUrl.equals(other.rulingsApiUrl))
+			return false;
+		if (selfApiUrl == null) {
+			if (other.selfApiUrl != null)
+				return false;
+		} else if (!selfApiUrl.equals(other.selfApiUrl))
+			return false;
+		if (selfScryfallUrl == null) {
+			if (other.selfScryfallUrl != null)
+				return false;
+		} else if (!selfScryfallUrl.equals(other.selfScryfallUrl))
+			return false;
+		if (setApiSearchUrl == null) {
+			if (other.setApiSearchUrl != null)
+				return false;
+		} else if (!setApiSearchUrl.equals(other.setApiSearchUrl))
+			return false;
+		if (setApiUrl == null) {
+			if (other.setApiUrl != null)
+				return false;
+		} else if (!setApiUrl.equals(other.setApiUrl))
 			return false;
 		if (setCode == null) {
 			if (other.setCode != null)
 				return false;
 		} else if (!setCode.equals(other.setCode))
 			return false;
-		if (timeshifted != other.timeshifted)
+		if (setName == null) {
+			if (other.setName != null)
+				return false;
+		} else if (!setName.equals(other.setName))
+			return false;
+		if (setScryfallUrl == null) {
+			if (other.setScryfallUrl != null)
+				return false;
+		} else if (!setScryfallUrl.equals(other.setScryfallUrl))
+			return false;
+		if (storySpotlight != other.storySpotlight)
+			return false;
+		if (tcgPlayerId != other.tcgPlayerId)
 			return false;
 		if (toughness == null) {
 			if (other.toughness != null)
@@ -386,11 +557,6 @@ public class MtgCardInformation {
 				return false;
 		} else if (!typeLine.equals(other.typeLine))
 			return false;
-		if (uniqueId == null) {
-			if (other.uniqueId != null)
-				return false;
-		} else if (!uniqueId.equals(other.uniqueId))
-			return false;
 		if (watermark == null) {
 			if (other.watermark != null)
 				return false;
@@ -399,30 +565,22 @@ public class MtgCardInformation {
 		return true;
 	}
 
-	/**
-	 * @return the artist
-	 */
+	public int getArenaId() {
+		return arenaId;
+	}
+
 	public String getArtist() {
 		return artist;
 	}
 
-	/**
-	 * @return the borderColor
-	 */
-	public String getBorderColor() {
+	public BorderColor getBorderColor() {
 		return borderColor;
 	}
 
-	/**
-	 * @return the cmc
-	 */
 	public double getCmc() {
 		return cmc;
 	}
 
-	/**
-	 * @return the collectorNumber
-	 */
 	public String getCollectorNumber() {
 		return collectorNumber;
 	}
@@ -431,404 +589,608 @@ public class MtgCardInformation {
 		return edhrecRank;
 	}
 
-	/**
-	 * @return the flavorText
-	 */
 	public String getFlavorText() {
 		return flavorText;
 	}
 
-	/**
-	 * @return the frame
-	 */
-	public String getFrame() {
+	public Frame getFrame() {
 		return frame;
 	}
 
-	/**
-	 * @return the illustrationId
-	 */
+	public FrameEffect getFrameEffect() {
+		return frameEffect;
+	}
+
+	public String getHandModifier() {
+		return handModifier;
+	}
+
+	public String getId() {
+		return id;
+	}
+
 	public String getIllustrationId() {
 		return illustrationId;
-	}
-
-	public Image getImage(ImageType imageType) throws IOException, IllegalArgumentException {
-		if (getImageUri().containsKey(imageType)) {
-			return ImageIO.read(new URL(getImageUri().get(imageType)));
-		} else {
-			throw new IllegalArgumentException("The card has no image of this the type: " + imageType);
-		}
-	}
-
-	/**
-	 * @return the imageUri
-	 */
-	public Map<ImageType, String> getImageUri() {
-		return imageUri;
 	}
 
 	public String getJsonString() {
 		return jsonString;
 	}
 
-	/**
-	 * @return the languageCode
-	 */
-	public String getLanguageCode() {
+	public LanguageCode getLanguageCode() {
 		return languageCode;
 	}
 
-	/**
-	 * @return the layout
-	 */
-	public String getLayout() {
+	public Layout getLayout() {
 		return layout;
 	}
 
-	/**
-	 * @return the listLegalities
-	 */
-	public Legality getLegality() {
-		return legality;
+	public String getLifeModifier() {
+		return lifeModifier;
 	}
 
-	/**
-	 * @return the listCardFaces
-	 */
+	public List<RelatedCard> getListAllParts() {
+		return listAllParts;
+	}
+
 	public List<CardFace> getListCardFaces() {
 		return listCardFaces;
 	}
 
-	/**
-	 * @return the listColorIdentities
-	 */
-	public List<String> getListColorIdentities() {
+	public List<Symbol> getListColorIdentities() {
 		return listColorIdentities;
 	}
 
-	/**
-	 * @return the listColors
-	 */
-	public List<String> getListColors() {
+	public List<Symbol> getListColorIndicators() {
+		return listColorIndicators;
+	}
+
+	public List<Symbol> getListColors() {
 		return listColors;
 	}
 
-	/**
-	 * @return the listRelatedCards
-	 */
-	public List<RelatedCard> getListRelatedCards() {
-		return listRelatedCards;
+	public List<Game> getListGames() {
+		return listGames;
 	}
 
-	/**
-	 * @return the manaCost
-	 */
+	public List<Integer> getListMultiverseIds() {
+		return listMultiverseIds;
+	}
+
+	public String getLoyalty() {
+		return loyalty;
+	}
+
 	public String getManaCost() {
 		return manaCost;
 	}
 
-	/**
-	 * @return the name
-	 */
+	public Map<ImageType, String> getMapImageUrls() {
+		return mapImageUrls;
+	}
+
+	public Map<PlayFormat, Legality> getMapLegality() {
+		return mapLegality;
+	}
+
+	public Map<PriceType, BigDecimal> getMapPricing() {
+		return mapPricing;
+	}
+
+	public Map<RelatedSite, String> getMapRelatedUrls() {
+		return mapRelatedUrls;
+	}
+
+	public int getMtgoFoilId() {
+		return mtgoFoilId;
+	}
+
+	public int getMtgoId() {
+		return mtgoId;
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @return the oracleId
-	 */
 	public String getOracleId() {
 		return oracleId;
 	}
 
-	/**
-	 * @return the oracleText
-	 */
-	public String getOracleText() {
-		return oracleText;
+	public String getOrcaleText() {
+		return orcaleText;
 	}
 
-	/**
-	 * @return the power
-	 */
 	public String getPower() {
 		return power;
 	}
 
-	public BigDecimal getPriceEur() {
-		return priceEur;
-	}
-
-	public BigDecimal getPriceTix() {
-		return priceTix;
-	}
-
-	public BigDecimal getPriceUsd() {
-		return priceUsd;
-	}
-
-	/**
-	 * @return the printedName
-	 */
 	public String getPrintedName() {
 		return printedName;
 	}
 
-	/**
-	 * @return the printedText
-	 */
 	public String getPrintedText() {
 		return printedText;
 	}
 
-	/**
-	 * @return the printedTypeLine
-	 */
 	public String getPrintedTypeLine() {
 		return printedTypeLine;
 	}
 
-	/**
-	 * @return the rarity
-	 */
-	public String getRarity() {
+	public String getPrintsApiSearchUrl() {
+		return printsApiSearchUrl;
+	}
+
+	public Rarity getRarity() {
 		return rarity;
 	}
 
-	/**
-	 * @return the scryfallUri
-	 */
-	public String getScryfallUri() {
-		return scryfallUri;
+	public LocalDate getReleaseDate() {
+		return releaseDate;
 	}
 
-	/**
-	 * @return the setCode
-	 */
+	public String getRulingsApiUrl() {
+		return rulingsApiUrl;
+	}
+
+	public String getSelfApiUrl() {
+		return selfApiUrl;
+	}
+
+	public String getSelfScryfallUrl() {
+		return selfScryfallUrl;
+	}
+
+	public String getSetApiSearchUrl() {
+		return setApiSearchUrl;
+	}
+
+	public String getSetApiUrl() {
+		return setApiUrl;
+	}
+
 	public String getSetCode() {
 		return setCode;
-	}
-
-	public Set<Link> getSetLinks() {
-		return setLinks;
 	}
 
 	public String getSetName() {
 		return setName;
 	}
 
-	/**
-	 * @return the toughness
-	 */
+	public String getSetScryfallUrl() {
+		return setScryfallUrl;
+	}
+
+	public int getTcgPlayerId() {
+		return tcgPlayerId;
+	}
+
 	public String getToughness() {
 		return toughness;
 	}
 
-	/**
-	 * @return the typeLine
-	 */
 	public String getTypeLine() {
 		return typeLine;
 	}
 
-	/**
-	 * @return the uniqueId
-	 */
-	public String getUniqueId() {
-		return uniqueId;
-	}
-
-	/**
-	 * @return the watermark
-	 */
 	public String getWatermark() {
 		return watermark;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + arenaId;
 		result = prime * result + ((artist == null) ? 0 : artist.hashCode());
 		result = prime * result + ((borderColor == null) ? 0 : borderColor.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(cmc);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((collectorNumber == null) ? 0 : collectorNumber.hashCode());
-		result = prime * result + (colorshifted ? 1231 : 1237);
-		result = prime * result + (digital ? 1231 : 1237);
+		result = prime * result + (digitalCard ? 1231 : 1237);
+		result = prime * result + edhrecRank;
 		result = prime * result + ((flavorText == null) ? 0 : flavorText.hashCode());
-		result = prime * result + (foilAvailable ? 1231 : 1237);
+		result = prime * result + (foilExists ? 1231 : 1237);
 		result = prime * result + ((frame == null) ? 0 : frame.hashCode());
+		result = prime * result + ((frameEffect == null) ? 0 : frameEffect.hashCode());
 		result = prime * result + (fullArt ? 1231 : 1237);
-		result = prime * result + (futureshifted ? 1231 : 1237);
+		result = prime * result + ((handModifier == null) ? 0 : handModifier.hashCode());
+		result = prime * result + (highResImageAvailable ? 1231 : 1237);
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((illustrationId == null) ? 0 : illustrationId.hashCode());
-		result = prime * result + ((imageUri == null) ? 0 : imageUri.hashCode());
+		result = prime * result + ((jsonString == null) ? 0 : jsonString.hashCode());
 		result = prime * result + ((languageCode == null) ? 0 : languageCode.hashCode());
 		result = prime * result + ((layout == null) ? 0 : layout.hashCode());
+		result = prime * result + ((lifeModifier == null) ? 0 : lifeModifier.hashCode());
+		result = prime * result + ((listAllParts == null) ? 0 : listAllParts.hashCode());
 		result = prime * result + ((listCardFaces == null) ? 0 : listCardFaces.hashCode());
 		result = prime * result + ((listColorIdentities == null) ? 0 : listColorIdentities.hashCode());
+		result = prime * result + ((listColorIndicators == null) ? 0 : listColorIndicators.hashCode());
 		result = prime * result + ((listColors == null) ? 0 : listColors.hashCode());
-		result = prime * result + ((legality == null) ? 0 : legality.hashCode());
-		result = prime * result + ((listRelatedCards == null) ? 0 : listRelatedCards.hashCode());
+		result = prime * result + ((listGames == null) ? 0 : listGames.hashCode());
+		result = prime * result + ((listMultiverseIds == null) ? 0 : listMultiverseIds.hashCode());
+		result = prime * result + ((loyalty == null) ? 0 : loyalty.hashCode());
 		result = prime * result + ((manaCost == null) ? 0 : manaCost.hashCode());
+		result = prime * result + ((mapImageUrls == null) ? 0 : mapImageUrls.hashCode());
+		result = prime * result + ((mapLegality == null) ? 0 : mapLegality.hashCode());
+		result = prime * result + ((mapPricing == null) ? 0 : mapPricing.hashCode());
+		result = prime * result + ((mapRelatedUrls == null) ? 0 : mapRelatedUrls.hashCode());
+		result = prime * result + mtgoFoilId;
+		result = prime * result + mtgoId;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + (nonFoilAvailable ? 1231 : 1237);
+		result = prime * result + (nonFoilExists ? 1231 : 1237);
 		result = prime * result + ((oracleId == null) ? 0 : oracleId.hashCode());
-		result = prime * result + ((oracleText == null) ? 0 : oracleText.hashCode());
+		result = prime * result + ((orcaleText == null) ? 0 : orcaleText.hashCode());
 		result = prime * result + (oversized ? 1231 : 1237);
 		result = prime * result + ((power == null) ? 0 : power.hashCode());
 		result = prime * result + ((printedName == null) ? 0 : printedName.hashCode());
 		result = prime * result + ((printedText == null) ? 0 : printedText.hashCode());
 		result = prime * result + ((printedTypeLine == null) ? 0 : printedTypeLine.hashCode());
+		result = prime * result + ((printsApiSearchUrl == null) ? 0 : printsApiSearchUrl.hashCode());
+		result = prime * result + (promo ? 1231 : 1237);
 		result = prime * result + ((rarity == null) ? 0 : rarity.hashCode());
+		result = prime * result + ((releaseDate == null) ? 0 : releaseDate.hashCode());
 		result = prime * result + (reprint ? 1231 : 1237);
 		result = prime * result + (reserved ? 1231 : 1237);
-		result = prime * result + ((scryfallUri == null) ? 0 : scryfallUri.hashCode());
+		result = prime * result + ((rulingsApiUrl == null) ? 0 : rulingsApiUrl.hashCode());
+		result = prime * result + ((selfApiUrl == null) ? 0 : selfApiUrl.hashCode());
+		result = prime * result + ((selfScryfallUrl == null) ? 0 : selfScryfallUrl.hashCode());
+		result = prime * result + ((setApiSearchUrl == null) ? 0 : setApiSearchUrl.hashCode());
+		result = prime * result + ((setApiUrl == null) ? 0 : setApiUrl.hashCode());
 		result = prime * result + ((setCode == null) ? 0 : setCode.hashCode());
-		result = prime * result + (timeshifted ? 1231 : 1237);
+		result = prime * result + ((setName == null) ? 0 : setName.hashCode());
+		result = prime * result + ((setScryfallUrl == null) ? 0 : setScryfallUrl.hashCode());
+		result = prime * result + (storySpotlight ? 1231 : 1237);
+		result = prime * result + tcgPlayerId;
 		result = prime * result + ((toughness == null) ? 0 : toughness.hashCode());
 		result = prime * result + ((typeLine == null) ? 0 : typeLine.hashCode());
-		result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
 		result = prime * result + ((watermark == null) ? 0 : watermark.hashCode());
 		return result;
 	}
 
-	/**
-	 * @return the colorshifted
-	 */
-	public boolean isColorshifted() {
-		return colorshifted;
+	public boolean isDigitalCard() {
+		return digitalCard;
 	}
 
-	/**
-	 * @return the digital
-	 */
-	public boolean isDigital() {
-		return digital;
+	public boolean isFoilExists() {
+		return foilExists;
 	}
 
-	/**
-	 * @return the foil
-	 */
-	public boolean isFoilAvailable() {
-		return foilAvailable;
-	}
-
-	/**
-	 * @return the fullArt
-	 */
 	public boolean isFullArt() {
 		return fullArt;
 	}
 
-	/**
-	 * @return the futureshifted
-	 */
-	public boolean isFutureshifted() {
-		return futureshifted;
+	public boolean isHighResImageAvailable() {
+		return highResImageAvailable;
 	}
 
-	/**
-	 * @return the nonfoil
-	 */
-	public boolean isNonFoilAvailable() {
-		return nonFoilAvailable;
+	public boolean isNonFoilExists() {
+		return nonFoilExists;
 	}
 
-	/**
-	 * @return the oversized
-	 */
 	public boolean isOversized() {
 		return oversized;
 	}
 
-	/**
-	 * @return the reprint
-	 */
+	public boolean isPromo() {
+		return promo;
+	}
+
 	public boolean isReprint() {
 		return reprint;
 	}
 
-	/**
-	 * @return the reserved
-	 */
 	public boolean isReserved() {
 		return reserved;
 	}
 
-	/**
-	 * @return the timeshifted
-	 */
-	public boolean isTimeshifted() {
-		return timeshifted;
+	public boolean isStorySpotlight() {
+		return storySpotlight;
+	}
+
+	public void setArenaId(int arenaId) {
+		this.arenaId = arenaId;
+	}
+
+	public void setArtist(String artist) {
+		this.artist = artist;
+	}
+
+	public void setBorderColor(BorderColor borderColor) {
+		this.borderColor = borderColor;
+	}
+
+	public void setCmc(double cmc) {
+		this.cmc = cmc;
+	}
+
+	public void setCollectorNumber(String collectorNumber) {
+		this.collectorNumber = collectorNumber;
+	}
+
+	public void setDigitalCard(boolean digitalCard) {
+		this.digitalCard = digitalCard;
 	}
 
 	public void setEdhrecRank(int edhrecRank) {
 		this.edhrecRank = edhrecRank;
 	}
 
-	public void setLegality(Legality legality) {
-		this.legality = legality;
+	public void setFlavorText(String flavorText) {
+		this.flavorText = flavorText;
 	}
 
-	public void setPriceEur(BigDecimal priceEur) {
-		this.priceEur = priceEur;
+	public void setFoilExists(boolean foilExists) {
+		this.foilExists = foilExists;
 	}
 
-	public void setPriceTix(BigDecimal priceTix) {
-		this.priceTix = priceTix;
+	public void setFrame(Frame frame) {
+		this.frame = frame;
 	}
 
-	public void setPriceUsd(BigDecimal priceUsd) {
-		this.priceUsd = priceUsd;
+	public void setFrameEffect(FrameEffect frameEffect) {
+		this.frameEffect = frameEffect;
 	}
 
-	public void setSetLinks(Set<Link> setLinks) {
-		this.setLinks = setLinks;
+	public void setFullArt(boolean fullArt) {
+		this.fullArt = fullArt;
+	}
+
+	public void setHandModifier(String handModifier) {
+		this.handModifier = handModifier;
+	}
+
+	public void setHighResImageAvailable(boolean highResImageAvailable) {
+		this.highResImageAvailable = highResImageAvailable;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setIllustrationId(String illustrationId) {
+		this.illustrationId = illustrationId;
+	}
+
+	public void setJsonString(String jsonString) {
+		this.jsonString = jsonString;
+	}
+
+	public void setLanguageCode(LanguageCode languageCode) {
+		this.languageCode = languageCode;
+	}
+
+	public void setLayout(Layout layout) {
+		this.layout = layout;
+	}
+
+	public void setLifeModifier(String lifeModifier) {
+		this.lifeModifier = lifeModifier;
+	}
+
+	public void setListAllParts(List<RelatedCard> listAllParts) {
+		this.listAllParts = listAllParts;
+	}
+
+	public void setListCardFaces(List<CardFace> listCardFaces) {
+		this.listCardFaces = listCardFaces;
+	}
+
+	public void setListColorIdentities(List<Symbol> listColorIdentities) {
+		this.listColorIdentities = listColorIdentities;
+	}
+
+	public void setListColorIndicators(List<Symbol> listColorIndicators) {
+		this.listColorIndicators = listColorIndicators;
+	}
+
+	public void setListColors(List<Symbol> listColors) {
+		this.listColors = listColors;
+	}
+
+	public void setListGames(List<Game> listGames) {
+		this.listGames = listGames;
+	}
+
+	public void setListMultiverseIds(List<Integer> listMultiverseIds) {
+		this.listMultiverseIds = listMultiverseIds;
+	}
+
+	public void setLoyalty(String loyalty) {
+		this.loyalty = loyalty;
+	}
+
+	public void setManaCost(String manaCost) {
+		this.manaCost = manaCost;
+	}
+
+	public void setMapImageUrls(Map<ImageType, String> mapImageUrls) {
+		this.mapImageUrls = mapImageUrls;
+	}
+
+	public void setMapLegality(Map<PlayFormat, Legality> mapLegality) {
+		this.mapLegality = mapLegality;
+	}
+
+	public void setMapPricing(Map<PriceType, BigDecimal> mapPricing) {
+		this.mapPricing = mapPricing;
+	}
+
+	public void setMapRelatedUrls(Map<RelatedSite, String> mapRelatedUrls) {
+		this.mapRelatedUrls = mapRelatedUrls;
+	}
+
+	public void setMtgoFoilId(int mtgoFoilId) {
+		this.mtgoFoilId = mtgoFoilId;
+	}
+
+	public void setMtgoId(int mtgoId) {
+		this.mtgoId = mtgoId;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setNonFoilExists(boolean nonFoilExists) {
+		this.nonFoilExists = nonFoilExists;
+	}
+
+	public void setOracleId(String oracleId) {
+		this.oracleId = oracleId;
+	}
+
+	public void setOrcaleText(String orcaleText) {
+		this.orcaleText = orcaleText;
+	}
+
+	public void setOversized(boolean oversized) {
+		this.oversized = oversized;
+	}
+
+	public void setPower(String power) {
+		this.power = power;
+	}
+
+	public void setPrintedName(String printedName) {
+		this.printedName = printedName;
+	}
+
+	public void setPrintedText(String printedText) {
+		this.printedText = printedText;
+	}
+
+	public void setPrintedTypeLine(String printedTypeLine) {
+		this.printedTypeLine = printedTypeLine;
+	}
+
+	public void setPrintsApiSearchUrl(String printsApiSearchUrl) {
+		this.printsApiSearchUrl = printsApiSearchUrl;
+	}
+
+	public void setPromo(boolean promo) {
+		this.promo = promo;
+	}
+
+	public void setRarity(Rarity rarity) {
+		this.rarity = rarity;
+	}
+
+	public void setReleaseDate(LocalDate releaseDate) {
+		this.releaseDate = releaseDate;
+	}
+
+	public void setReprint(boolean reprint) {
+		this.reprint = reprint;
+	}
+
+	public void setReserved(boolean reserved) {
+		this.reserved = reserved;
+	}
+
+	public void setRulingsApiUrl(String rulingsApiUrl) {
+		this.rulingsApiUrl = rulingsApiUrl;
+	}
+
+	public void setSelfApiUrl(String selfApiUrl) {
+		this.selfApiUrl = selfApiUrl;
+	}
+
+	public void setSelfScryfallUrl(String selfScryfallUrl) {
+		this.selfScryfallUrl = selfScryfallUrl;
+	}
+
+	public void setSetApiSearchUrl(String setApiSearchUrl) {
+		this.setApiSearchUrl = setApiSearchUrl;
+	}
+
+	public void setSetApiUrl(String setApiUrl) {
+		this.setApiUrl = setApiUrl;
+	}
+
+	public void setSetCode(String setCode) {
+		this.setCode = setCode;
+	}
+
+	public void setSetName(String setName) {
+		this.setName = setName;
+	}
+
+	public void setSetScryfallUrl(String setScryfallUrl) {
+		this.setScryfallUrl = setScryfallUrl;
+	}
+
+	public void setStorySpotlight(boolean storySpotlight) {
+		this.storySpotlight = storySpotlight;
+	}
+
+	public void setTcgPlayerId(int tcgPlayerId) {
+		this.tcgPlayerId = tcgPlayerId;
+	}
+
+	public void setToughness(String toughness) {
+		this.toughness = toughness;
+	}
+
+	public void setTypeLine(String typeLine) {
+		this.typeLine = typeLine;
+	}
+
+	public void setWatermark(String watermark) {
+		this.watermark = watermark;
 	}
 
 	@Override
 	public String toString() {
 		return "MtgCardInformation [" + (jsonString != null ? "jsonString=" + jsonString + ", " : "")
-				+ (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
-				+ (oracleId != null ? "oracleId=" + oracleId + ", " : "") + (name != null ? "name=" + name + ", " : "")
-				+ (printedName != null ? "printedName=" + printedName + ", " : "")
+				+ (id != null ? "id=" + id + ", " : "") + "arenaId=" + arenaId + ", mtgoId=" + mtgoId + ", mtgoFoilId="
+				+ mtgoFoilId + ", " + (listMultiverseIds != null ? "listMultiverseIds=" + listMultiverseIds + ", " : "")
+				+ "tcgPlayerId=" + tcgPlayerId + ", " + (oracleId != null ? "oracleId=" + oracleId + ", " : "")
 				+ (languageCode != null ? "languageCode=" + languageCode + ", " : "")
-				+ (scryfallUri != null ? "scryfallUri=" + scryfallUri + ", " : "")
-				+ (layout != null ? "layout=" + layout + ", " : "")
-				+ (imageUri != null ? "imageUri=" + imageUri + ", " : "")
-				+ (manaCost != null ? "manaCost=" + manaCost + ", " : "") + "cmc=" + cmc + ", "
-				+ (typeLine != null ? "typeLine=" + typeLine + ", " : "")
-				+ (printedTypeLine != null ? "printedTypeLine=" + printedTypeLine + ", " : "")
-				+ (oracleText != null ? "oracleText=" + oracleText + ", " : "")
-				+ (printedText != null ? "printedText=" + printedText + ", " : "")
-				+ (power != null ? "power=" + power + ", " : "")
-				+ (toughness != null ? "toughness=" + toughness + ", " : "")
+				+ (printsApiSearchUrl != null ? "printsApiSearchUrl=" + printsApiSearchUrl + ", " : "")
+				+ (rulingsApiUrl != null ? "rulingsApiUrl=" + rulingsApiUrl + ", " : "")
+				+ (selfScryfallUrl != null ? "selfScryfallUrl=" + selfScryfallUrl + ", " : "")
+				+ (selfApiUrl != null ? "selfApiUrl=" + selfApiUrl + ", " : "")
+				+ (listAllParts != null ? "listAllParts=" + listAllParts + ", " : "")
+				+ (listCardFaces != null ? "listCardFaces=" + listCardFaces + ", " : "") + "cmc=" + cmc + ", "
 				+ (listColors != null ? "listColors=" + listColors + ", " : "")
 				+ (listColorIdentities != null ? "listColorIdentities=" + listColorIdentities + ", " : "")
-				+ (listCardFaces != null ? "listCardFaces=" + listCardFaces + ", " : "")
-				+ (listRelatedCards != null ? "listRelatedCards=" + listRelatedCards + ", " : "")
-				+ (legality != null ? "legality=" + legality + ", " : "") + "reserved=" + reserved + ", foil="
-				+ foilAvailable + ", nonFoil=" + nonFoilAvailable + ", oversized=" + oversized + ", reprint=" + reprint
-				+ ", " + (setCode != null ? "setCode=" + setCode + ", " : "")
-				+ (setName != null ? "setName=" + setName + ", " : "")
-				+ (collectorNumber != null ? "collectorNumber=" + collectorNumber + ", " : "") + "digital=" + digital
-				+ ", " + (rarity != null ? "rarity=" + rarity + ", " : "")
+				+ (listColorIndicators != null ? "listColorIndicators=" + listColorIndicators + ", " : "")
+				+ "edhrecRank=" + edhrecRank + ", foilExists=" + foilExists + ", "
+				+ (handModifier != null ? "handModifier=" + handModifier + ", " : "")
+				+ (layout != null ? "layout=" + layout + ", " : "")
+				+ (mapLegality != null ? "mapLegality=" + mapLegality + ", " : "")
+				+ (lifeModifier != null ? "lifeModifier=" + lifeModifier + ", " : "")
+				+ (loyalty != null ? "loyalty=" + loyalty + ", " : "")
+				+ (manaCost != null ? "manaCost=" + manaCost + ", " : "") + (name != null ? "name=" + name + ", " : "")
+				+ "nonFoilExists=" + nonFoilExists + ", "
+				+ (orcaleText != null ? "orcaleText=" + orcaleText + ", " : "") + "oversized=" + oversized + ", "
+				+ (power != null ? "power=" + power + ", " : "") + "reserved=" + reserved + ", "
+				+ (toughness != null ? "toughness=" + toughness + ", " : "")
+				+ (typeLine != null ? "typeLine=" + typeLine + ", " : "")
+				+ (artist != null ? "artist=" + artist + ", " : "")
+				+ (borderColor != null ? "borderColor=" + borderColor + ", " : "")
+				+ (collectorNumber != null ? "collectorNumber=" + collectorNumber + ", " : "") + "digitalCard="
+				+ digitalCard + ", " + (flavorText != null ? "flavorText=" + flavorText + ", " : "")
+				+ (frameEffect != null ? "frameEffect=" + frameEffect + ", " : "")
+				+ (frame != null ? "frame=" + frame + ", " : "") + "fullArt=" + fullArt + ", "
+				+ (listGames != null ? "listGames=" + listGames + ", " : "") + "highResImageAvailable="
+				+ highResImageAvailable + ", "
 				+ (illustrationId != null ? "illustrationId=" + illustrationId + ", " : "")
-				+ (watermark != null ? "watermark=" + watermark + ", " : "")
-				+ (flavorText != null ? "flavorText=" + flavorText + ", " : "")
-				+ (artist != null ? "artist=" + artist + ", " : "") + (frame != null ? "frame=" + frame + ", " : "")
-				+ "fullArt=" + fullArt + ", " + (borderColor != null ? "borderColor=" + borderColor + ", " : "")
-				+ "timeshifted=" + timeshifted + ", colorshifted=" + colorshifted + ", futureshifted=" + futureshifted
-				+ ", edhrecRank=" + edhrecRank + ", " + (priceUsd != null ? "priceUsd=" + priceUsd + ", " : "")
-				+ (priceEur != null ? "priceEur=" + priceEur + ", " : "")
-				+ (priceTix != null ? "priceTix=" + priceTix + ", " : "")
-				+ (setLinks != null ? "setLinks=" + setLinks : "") + "]";
+				+ (mapImageUrls != null ? "mapImageUrls=" + mapImageUrls + ", " : "")
+				+ (mapPricing != null ? "mapPricing=" + mapPricing + ", " : "")
+				+ (printedName != null ? "printedName=" + printedName + ", " : "")
+				+ (printedText != null ? "printedText=" + printedText + ", " : "")
+				+ (printedTypeLine != null ? "printedTypeLine=" + printedTypeLine + ", " : "") + "promo=" + promo + ", "
+				+ (mapRelatedUrls != null ? "mapRelatedUrls=" + mapRelatedUrls + ", " : "")
+				+ (rarity != null ? "rarity=" + rarity + ", " : "")
+				+ (releaseDate != null ? "releaseDate=" + releaseDate + ", " : "") + "reprint=" + reprint + ", "
+				+ (setScryfallUrl != null ? "setScryfallUrl=" + setScryfallUrl + ", " : "")
+				+ (setName != null ? "setName=" + setName + ", " : "")
+				+ (setApiSearchUrl != null ? "setApiSearchUrl=" + setApiSearchUrl + ", " : "")
+				+ (setApiUrl != null ? "setApiUrl=" + setApiUrl + ", " : "")
+				+ (setCode != null ? "setCode=" + setCode + ", " : "") + "storySpotlight=" + storySpotlight + ", "
+				+ (watermark != null ? "watermark=" + watermark : "") + "]";
 	}
 }

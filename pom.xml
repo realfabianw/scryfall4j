@@ -4,7 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.ics.scryfall4j</groupId>
 	<properties>
+		<version.gson>2.8.5</version.gson>
+		<version.logback>1.2.3</version.logback>
 		<version.batik-transcoder>1.10</version.batik-transcoder>
+		<version.batik-codec>1.9</version.batik-codec>
+		<version.nv-i18n>1.22</version.nv-i18n>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>10</maven.compiler.source>
@@ -15,7 +19,13 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.8.2</version>
+			<version>${version.gson}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${version.logback}</version>
 		</dependency>
 
 		<dependency>
@@ -27,7 +37,13 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-codec</artifactId>
-			<version>1.9</version>
+			<version>${version.batik-codec}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.neovisionaries</groupId>
+			<artifactId>nv-i18n</artifactId>
+			<version>${version.nv-i18n}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -82,5 +98,5 @@
 	</build>
 	<name>scryfall4j</name>
 	<artifactId>scryfall4j</artifactId>
-	<version>1.8.3</version>
+	<version>2.0.0</version>
 </project>

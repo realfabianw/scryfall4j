@@ -3,233 +3,153 @@ package de.ics.scryfall;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * This class is the entry-point for all requests to the Scryfall-API.
+ * This class serves as an entry-point to the Scryfall-API. All implemented
+ * features are accessible through this class.
  * 
  * @author QUE
  *
  */
 public class Scryfall {
-	private static final String URI_API = "https://api.scryfall.com/";
+	private static Logger LOGGER = LoggerFactory.getLogger("Scryfall");
+	private static final String API = "https://api.scryfall.com/";
 	private static final String SETS = "sets/";
 	private static final String CARDS = "cards/";
 	private static final String SEARCH_QUERY = "search?q=";
 
-	/**
-	 * Returns a Json response of a base level api call. The api call can be
-	 * modified by the parameter.
-	 * 
-	 * @param uri
-	 * @return {@code JsonElement jsonResponse}
-	 * @throws IOException
-	 */
-	private static JsonElement apiConnection(String uri) throws IOException {
-		return getJsonResponse(URI_API + uri);
+	private static URL createCardSearchUrl(String urlString, boolean includeAllLanguages, boolean includeReprints)
+			throws UnsupportedEncodingException, MalformedURLException {
+		return new URL(API + CARDS + SEARCH_QUERY + URLEncoder.encode(
+				urlString + (includeAllLanguages ? " lang:any" : "") + (includeReprints ? " unique:prints" : ""),
+				"UTF-8"));
 	}
 
 	/**
-	 * Makes an (card) api call based on the given search query. The given string
-	 * will be encoded by the UTF-8 standard.
-	 * 
+	 * @see https://scryfall.com/docs/api/cards/all
+	 * @return {@code List<MtgCardInformation> listCards}
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static List<MtgCardInformation> getListAllCards() throws IOException, InterruptedException {
+		List<MtgCardInformation> listCards = new ArrayList<>();
+		boolean firstIteration = true;
+		boolean hasMore = false;
+		URL nextPage = new URL(API + CARDS);
+		do {
+			if (!firstIteration) {
+				Thread.sleep(100);
+			} else {
+				firstIteration = false;
+			}
+			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
+			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
+			nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
+			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
+				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
+			}
+		} while (hasMore);
+		return listCards;
+	}
+
+	/**
+	 * @see https://scryfall.com/docs/api/sets/all
+	 * @return {@code List<MtgSetInformation> listAllSets}
+	 * @throws IOException
+	 */
+	public static List<MtgSetInformation> getListAllSets() throws IOException {
+		List<MtgSetInformation> listAllSets = new ArrayList<>();
+		JsonObject jsonResponse = request(API + SETS).getAsJsonObject();
+		for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
+			listAllSets.add(new MtgSetInformation(jElement.getAsJsonObject()));
+		}
+		return listAllSets;
+	}
+
+	/**
 	 * @see https://scryfall.com/docs/api/cards/search
-	 * @see https://scryfall.com/docs/reference
-	 * @example input: "!\"Rattenkolonie\" lang:any" output:
-	 *          https://api.scryfall.com/cards/search?q=%21%22Rattenkolonie%22+lang%3Aany
 	 * @param searchQuery
-	 * @throws IOException
-	 */
-	private static JsonElement cardSearchQuery(String searchQuery) throws IOException {
-		return apiConnection(CARDS + SEARCH_QUERY + URLEncoder.encode(searchQuery, "UTF-8"));
-	}
-
-	/**
-	 * Returns all currently listed sets.
-	 * 
-	 * @return {@code List<Set> listSets}
-	 * @throws IOException
-	 */
-	public static List<MtgSetInformation> getAllSets() throws IOException {
-		List<MtgSetInformation> listSets = new ArrayList<>();
-		JsonObject result = apiConnection(SETS).getAsJsonObject();
-		JsonArray setArray = result.get("data").getAsJsonArray();
-		for (JsonElement setElement : setArray) {
-			listSets.add(new MtgSetInformation(setElement.getAsJsonObject()));
-		}
-		return listSets;
-	}
-
-	/**
-	 * Returns a list of cards based on the given searchQuery. Includes all
-	 * languages and reprints.
-	 * 
-	 * @param searchQuery
-	 * @return {@code List<MtgCardInformation> listCardInformation}
+	 * @param includeAllLanguages
+	 * @param includeReprints
+	 * @return {@code List<MtgCardInformation> listCards}
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static List<MtgCardInformation> getCardByCustomSearch(String searchQuery)
-			throws IOException, InterruptedException {
+	public static List<MtgCardInformation> getListCardsBySearch(String searchQuery, boolean includeAllLanguages,
+			boolean includeReprints) throws IOException, InterruptedException {
 		List<MtgCardInformation> listCards = new ArrayList<>();
-		JsonObject result = cardSearchQuery(searchQuery + " lang:any unique:prints").getAsJsonObject();
-
-		boolean hasMore = true;
-		String nextPage;
-		while (hasMore) {
-			hasMore = result.get("has_more").getAsBoolean();
-
-			JsonArray cardArray = result.get("data").getAsJsonArray();
-			for (JsonElement cardElement : cardArray) {
-				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
-			}
-
-			if (hasMore) {
-				nextPage = result.get("next_page").getAsString();
+		boolean firstIteration = true;
+		boolean hasMore = false;
+		URL nextPage = createCardSearchUrl(searchQuery, includeAllLanguages, includeReprints);
+		do {
+			if (!firstIteration) {
 				Thread.sleep(100);
-				result = getJsonResponse(nextPage).getAsJsonObject();
+			} else {
+				firstIteration = false;
 			}
-		}
-		return listCards;
-	}
-	
-	/**
-	 * Returns a list of cards based on the given searchQuery. Includes all
-	 * languages and reprints.
-	 * 
-	 * @param searchQuery
-	 * @return {@code List<MtgCardInformation> listCardInformation}
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public static List<MtgCardInformation> getEnglishCardByCustomSearch(String searchQuery)
-			throws IOException, InterruptedException {
-		List<MtgCardInformation> listCards = new ArrayList<>();
-		JsonObject result = cardSearchQuery(searchQuery + " unique:prints").getAsJsonObject();
+			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
+			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
+			try {
+				nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
+			} catch (MalformedURLException e) {
 
-		boolean hasMore = true;
-		String nextPage;
-		while (hasMore) {
-			hasMore = result.get("has_more").getAsBoolean();
-
-			JsonArray cardArray = result.get("data").getAsJsonArray();
-			for (JsonElement cardElement : cardArray) {
-				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
 			}
-
-			if (hasMore) {
-				nextPage = result.get("next_page").getAsString();
-				Thread.sleep(100);
-				result = getJsonResponse(nextPage).getAsJsonObject();
+			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
+				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
 			}
-		}
+		} while (hasMore);
 		return listCards;
 	}
 
 	/**
-	 * Returns all prints of the given card in the correct language if the given
-	 * name is not english, or in all languages and all prints if the given name is
-	 * english.
-	 * 
-	 * @param cardName
-	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
-	 *          all languages)
-	 * @return {@code List<Card> listCards}
+	 * @see https://scryfall.com/docs/api/sets/code
+	 * @param setCode
+	 * @return {@code MtgSetInformation mtgSetInformation}
 	 * @throws IOException
-	 * @throws InterruptedException
 	 */
-	public static List<MtgCardInformation> getCardByName(String cardName) throws IOException, InterruptedException {
-		List<MtgCardInformation> listCards = new ArrayList<>();
-		JsonObject result = cardSearchQuery(cardName + " lang:any unique:prints").getAsJsonObject();
-
-		boolean hasMore = true;
-		String nextPage;
-		while (hasMore) {
-			hasMore = result.get("has_more").getAsBoolean();
-
-			JsonArray cardArray = result.get("data").getAsJsonArray();
-			for (JsonElement cardElement : cardArray) {
-				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
-			}
-
-			if (hasMore) {
-				nextPage = result.get("next_page").getAsString();
-				Thread.sleep(100);
-				result = getJsonResponse(nextPage).getAsJsonObject();
-			}
-		}
-		return listCards;
+	public static MtgSetInformation getSetByCode(String setCode) throws IOException {
+		JsonObject jsonResponse = request(API + SETS + setCode).getAsJsonObject();
+		return new MtgSetInformation(jsonResponse);
 	}
 
 	/**
-	 * Returns all prints of the given card in the correct language if the given
-	 * name is not english, or in all languages and all prints if the given name is
-	 * english.
-	 * 
-	 * @param uniqueId
-	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
-	 *          all languages)
-	 * @return {@code List<Card> listCards}
+	 * @see https://scryfall.com/docs/api/sets/id
+	 * @param id
+	 * @return {@code MtgSetInformation mtgSetInformation}
 	 * @throws IOException
 	 */
-	public static MtgCardInformation getCardByUniqueId(String uniqueId) throws IOException {
-		JsonObject result = apiConnection(CARDS + uniqueId).getAsJsonObject();
-		return new MtgCardInformation(result.getAsJsonObject());
+	public static MtgSetInformation getSetById(String id) throws IOException {
+		JsonObject jsonResponse = request(API + SETS + id).getAsJsonObject();
+		return new MtgSetInformation(jsonResponse);
 	}
 
 	/**
-	 * Returns all prints of the given card in the correct language if the given
-	 * name is not english, or in all languages and all prints if the given name is
-	 * english.
-	 * 
-	 * @param cardName
-	 * @example getCardByName("Lightning Bolt") returns 40+ cards. (All reprints,
-	 *          all languages)
-	 * @return {@code List<Card> listCards}
+	 * @see https://scryfall.com/docs/api/sets/tcgplayer
+	 * @param id
+	 * @return {@code MtgSetInformation mtgSetInformation}
 	 * @throws IOException
-	 * @throws InterruptedException
 	 */
-	public static List<MtgCardInformation> getEnglishCardByName(String cardName)
-			throws IOException, InterruptedException {
-		List<MtgCardInformation> listCards = new ArrayList<>();
-		JsonObject result = cardSearchQuery(cardName + " unique:prints").getAsJsonObject();
-
-		boolean hasMore = true;
-		String nextPage;
-		while (hasMore) {
-			hasMore = result.get("has_more").getAsBoolean();
-
-			JsonArray cardArray = result.get("data").getAsJsonArray();
-			for (JsonElement cardElement : cardArray) {
-				listCards.add(new MtgCardInformation(cardElement.getAsJsonObject()));
-			}
-
-			if (hasMore) {
-				nextPage = result.get("next_page").getAsString();
-				Thread.sleep(100);
-				result = getJsonResponse(nextPage).getAsJsonObject();
-			}
-		}
-		return listCards;
+	public static MtgSetInformation getSetByTcgPlayerId(String id) throws IOException {
+		JsonObject jsonResponse = request(API + SETS + "tcgplayer/" + id).getAsJsonObject();
+		return new MtgSetInformation(jsonResponse);
 	}
 
-	/**
-	 * Returns the response from the api as a jsonElement ready to parse.
-	 * 
-	 * @param urlString
-	 * @return {@code JsonElement jsonResponse}
-	 * @throws IOException
-	 */
-	private static JsonElement getJsonResponse(String urlString) throws IOException {
+	private static JsonElement request(String urlString) throws IOException {
 		URL url = new URL(urlString);
+		LOGGER.trace("Request: {}", url.toString());
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
 		StringBuilder jsonString = new StringBuilder();
 		String line;
@@ -237,17 +157,21 @@ public class Scryfall {
 			jsonString.append(line);
 		}
 		bufferedReader.close();
+		LOGGER.trace("Response: {}", jsonString.toString());
 		return new JsonParser().parse(jsonString.toString());
 	}
 
-	/**
-	 * Returns a specific set.
-	 * 
-	 * @return {@code List<Set> listSets}
-	 * @throws IOException
-	 */
-	public static MtgSetInformation getSetByCode(String setCode) throws IOException {
-		JsonObject result = apiConnection(SETS + setCode).getAsJsonObject();
-		return new MtgSetInformation(result);
+	private static JsonElement request(URL url) throws IOException {
+		LOGGER.trace("Request: {}", url.toString());
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+		StringBuilder jsonString = new StringBuilder();
+		String line;
+		while ((line = bufferedReader.readLine()) != null) {
+			jsonString.append(line);
+		}
+		bufferedReader.close();
+		LOGGER.trace("Response: {}", jsonString.toString());
+		return new JsonParser().parse(jsonString.toString());
 	}
+
 }
