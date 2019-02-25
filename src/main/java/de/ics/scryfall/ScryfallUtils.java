@@ -51,7 +51,7 @@ public class ScryfallUtils {
 		png_ostream.close();
 	}
 
-	public BufferedImage fetchCardImage(MtgCardInformation card, ImageType imageType)
+	public static BufferedImage fetchCardImage(MtgCardInformation card, ImageType imageType)
 			throws IOException, IllegalArgumentException {
 		if (card.getMapImageUrls().containsKey(imageType)) {
 			return fetchImage(card.getMapImageUrls().get(imageType));
@@ -60,11 +60,12 @@ public class ScryfallUtils {
 		}
 	}
 
-	public BufferedImage fetchImage(String urlString) throws IOException {
+	public static BufferedImage fetchImage(String urlString) throws IOException {
 		return ImageIO.read(new URL(urlString));
 	}
 
-	public BufferedImage saveSetIconToFile(String path, MtgSetInformation set) throws TranscoderException, IOException {
+	public static BufferedImage saveSetIconToFile(String path, MtgSetInformation set)
+			throws TranscoderException, IOException {
 		File fullPath = new File(path + "/set_" + set.getCode() + ".png");
 		saveSVGtoPNG(set.getIconSvgUrl().toString(), fullPath);
 		return ImageIO.read(fullPath);
