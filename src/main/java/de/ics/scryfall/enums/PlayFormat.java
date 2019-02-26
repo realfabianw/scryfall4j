@@ -10,7 +10,7 @@ package de.ics.scryfall.enums;
 public enum PlayFormat {
 	STANDARD("standard"), FUTURE("future"), MODERN("modern"), LEGACY("legacy"), VINTAGE("vintage"),
 	COMMANDER("commander"), FRONTIER("frontier"), PAUPER("pauper"), PENNY("penny"), DUEL_COMMANDER("duel"),
-	OLDSCHOOL("oldschool"), ONE_VS_ONE("1v1");
+	OLDSCHOOL("oldschool"), ONE_VS_ONE("1v1"), BRAWL("brawl");
 
 	public static PlayFormat parseId(String id) {
 		for (PlayFormat e : PlayFormat.values()) {
