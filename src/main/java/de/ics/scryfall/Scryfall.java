@@ -39,6 +39,16 @@ public class Scryfall {
 	}
 
 	/**
+	 * @see https://scryfall.com/docs/api/cards/id
+	 * @param id
+	 * @return {@code MtgCardInformation card}
+	 * @throws IOException
+	 */
+	public static MtgCardInformation getCardById(String id) throws IOException {
+		return new MtgCardInformation(request(API + CARDS + id).getAsJsonObject());
+	}
+
+	/**
 	 * @see https://scryfall.com/docs/api/cards/all
 	 * @return {@code List<MtgCardInformation> listCards}
 	 * @throws IOException

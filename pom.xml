@@ -8,7 +8,7 @@
 		<version.logback>1.2.3</version.logback>
 		<version.batik-transcoder>1.10</version.batik-transcoder>
 		<version.batik-codec>1.9</version.batik-codec>
-		<version.nv-i18n>1.22</version.nv-i18n>
+		<version.nv-i18n>1.24</version.nv-i18n>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>10</maven.compiler.source>

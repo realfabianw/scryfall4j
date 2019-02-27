@@ -13,6 +13,10 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.neovisionaries.i18n.LanguageCode;
 
 import de.ics.scryfall.enums.ImageType;
 
@@ -23,6 +27,42 @@ import de.ics.scryfall.enums.ImageType;
  *
  */
 public class ScryfallUtils {
+	private static Logger LOGGER = LoggerFactory.getLogger("ScryfallUtils");
+
+	public static BufferedImage fetchCardImage(MtgCardInformation card, ImageType imageType)
+			throws IOException, IllegalArgumentException {
+		if (card.getMapImageUrls().containsKey(imageType)) {
+			return fetchImage(card.getMapImageUrls().get(imageType));
+		} else {
+			throw new IllegalArgumentException("The card has no image of this type: " + imageType);
+		}
+	}
+
+	public static BufferedImage fetchImage(String urlString) throws IOException {
+		return ImageIO.read(new URL(urlString));
+	}
+
+	public static LanguageCode fromScryfallLanguageCode(String string) {
+		if (string.equals("zhs") || string.equals("zht")) {
+			return LanguageCode.zh;
+		} else {
+			LanguageCode code = LanguageCode.getByCode(string);
+			if (code != null) {
+				return code;
+			} else {
+				LOGGER.warn("LanguageCode " + string + " not recognised. Returning null");
+				return null;
+			}
+		}
+	}
+
+	public static BufferedImage saveSetIconToFile(String path, MtgSetInformation set)
+			throws TranscoderException, IOException {
+		File fullPath = new File(path + "/set_" + set.getCode() + ".png");
+		saveSVGtoPNG(set.getIconSvgUrl().toString(), fullPath);
+		return ImageIO.read(fullPath);
+	}
+
 	/**
 	 * this method converts a given svg image (by url) to a png image on the disk at
 	 * the given location.
@@ -49,25 +89,5 @@ public class ScryfallUtils {
 		// Step 5- close / flush Output Stream
 		png_ostream.flush();
 		png_ostream.close();
-	}
-
-	public static BufferedImage fetchCardImage(MtgCardInformation card, ImageType imageType)
-			throws IOException, IllegalArgumentException {
-		if (card.getMapImageUrls().containsKey(imageType)) {
-			return fetchImage(card.getMapImageUrls().get(imageType));
-		} else {
-			throw new IllegalArgumentException("The card has no image of this type: " + imageType);
-		}
-	}
-
-	public static BufferedImage fetchImage(String urlString) throws IOException {
-		return ImageIO.read(new URL(urlString));
-	}
-
-	public static BufferedImage saveSetIconToFile(String path, MtgSetInformation set)
-			throws TranscoderException, IOException {
-		File fullPath = new File(path + "/set_" + set.getCode() + ".png");
-		saveSVGtoPNG(set.getIconSvgUrl().toString(), fullPath);
-		return ImageIO.read(fullPath);
 	}
 }

@@ -112,7 +112,7 @@ public class MtgCardInformation {
 		}
 		this.tcgPlayerId = JsonIO.parseInteger(jObject, "tcgplayer_id");
 		this.oracleId = JsonIO.parseString(jObject, "oracle_id");
-		this.languageCode = LanguageCode.getByCode(JsonIO.parseString(jObject, "lang"));
+		this.languageCode = ScryfallUtils.fromScryfallLanguageCode(JsonIO.parseString(jObject, "lang"));
 		this.printsApiSearchUrl = JsonIO.parseString(jObject, "prints_search_uri");
 		this.rulingsApiUrl = JsonIO.parseString(jObject, "rulings_uri");
 		this.selfScryfallUrl = JsonIO.parseString(jObject, "scryfall_uri");
