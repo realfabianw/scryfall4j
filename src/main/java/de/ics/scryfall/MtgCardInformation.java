@@ -161,8 +161,14 @@ public class MtgCardInformation {
 		this.layout = Layout.parseId(JsonIO.parseString(jObject, "layout"));
 		this.mapLegality = new HashMap<>();
 		JsonObject jLegalities = jObject.get("legalities").getAsJsonObject();
-		for (String key : jLegalities.keySet()) {
-			mapLegality.put(PlayFormat.parseId(key), Legality.parseId(JsonIO.parseString(jLegalities, key)));
+		try {
+			for (String key : jLegalities.keySet()) {
+				mapLegality.put(PlayFormat.parseId(key), Legality.parseId(JsonIO.parseString(jLegalities, key)));
+			}
+		} catch (NoSuchMethodError e) {
+			// TODO this is an unknown error
+			// java.lang.NoSuchMethodError:
+			// com.google.gson.JsonObject.keySet()Ljava/util/Set;
 		}
 		this.lifeModifier = JsonIO.parseString(jObject, "life_modifier");
 		this.loyalty = JsonIO.parseString(jObject, "loyality");
