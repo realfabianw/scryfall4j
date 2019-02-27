@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import com.google.gson.JsonObject;
 
-public class JsonIO {
+class JsonIO {
 	static BigDecimal parseBigDecimal(JsonObject jObject, String fieldName) {
 		try {
 			return jObject.get(fieldName).getAsBigDecimal();

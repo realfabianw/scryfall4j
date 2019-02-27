@@ -160,9 +160,9 @@ public class MtgCardInformation {
 		this.handModifier = JsonIO.parseString(jObject, "hand_modifier");
 		this.layout = Layout.parseId(JsonIO.parseString(jObject, "layout"));
 		this.mapLegality = new HashMap<>();
-		for (String key : jObject.get("legalities").getAsJsonObject().keySet()) {
-			mapLegality.put(PlayFormat.parseId(key),
-					Legality.parseId(JsonIO.parseString(jObject.get("legalities").getAsJsonObject(), key)));
+		JsonObject jLegalities = jObject.get("legalities").getAsJsonObject();
+		for (String key : jLegalities.keySet()) {
+			mapLegality.put(PlayFormat.parseId(key), Legality.parseId(JsonIO.parseString(jLegalities, key)));
 		}
 		this.lifeModifier = JsonIO.parseString(jObject, "life_modifier");
 		this.loyalty = JsonIO.parseString(jObject, "loyality");
