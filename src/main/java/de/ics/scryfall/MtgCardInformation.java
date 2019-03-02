@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -161,15 +162,11 @@ public class MtgCardInformation {
 		this.layout = Layout.parseId(JsonIO.parseString(jObject, "layout"));
 		this.mapLegality = new HashMap<>();
 		JsonObject jLegalities = jObject.get("legalities").getAsJsonObject();
-		try {
-			for (String key : jLegalities.keySet()) {
-				mapLegality.put(PlayFormat.parseId(key), Legality.parseId(JsonIO.parseString(jLegalities, key)));
-			}
-		} catch (NoSuchMethodError e) {
-			// TODO this is an unknown error
-			// java.lang.NoSuchMethodError:
-			// com.google.gson.JsonObject.keySet()Ljava/util/Set;
+		Set<String> setKeysLegalities = jLegalities.keySet();
+		for (String key : setKeysLegalities) {
+			mapLegality.put(PlayFormat.parseId(key), Legality.parseId(JsonIO.parseString(jLegalities, key)));
 		}
+
 		this.lifeModifier = JsonIO.parseString(jObject, "life_modifier");
 		this.loyalty = JsonIO.parseString(jObject, "loyality");
 		this.manaCost = JsonIO.parseString(jObject, "mana_cost");
