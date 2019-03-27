@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.google.gson.JsonObject;
+
 import de.ics.scryfall.enums.SetType;
 
 /**

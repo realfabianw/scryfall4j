@@ -31,11 +31,12 @@ public class Scryfall {
 	private static final String CARDS = "cards/";
 	private static final String SEARCH_QUERY = "search?q=";
 
-	private static URL createCardSearchUrl(String urlString, boolean includeAllLanguages, boolean includeReprints)
-			throws UnsupportedEncodingException, MalformedURLException {
-		return new URL(API + CARDS + SEARCH_QUERY + URLEncoder.encode(
-				urlString + (includeAllLanguages ? " lang:any" : "") + (includeReprints ? " unique:prints" : ""),
-				"UTF-8"));
+	private static URL createCardSearchUrl(String urlString, boolean includeExtras, boolean includeAllLanguages,
+			boolean includeReprints) throws UnsupportedEncodingException, MalformedURLException {
+		return new URL(API + CARDS + SEARCH_QUERY
+				+ URLEncoder.encode(urlString + (includeExtras ? " include:extras" : "")
+						+ (includeAllLanguages ? " lang:any" : "") + (includeReprints ? " unique:prints" : ""),
+						"UTF-8"));
 	}
 
 	/**
@@ -92,18 +93,19 @@ public class Scryfall {
 	/**
 	 * @see https://scryfall.com/docs/api/cards/search
 	 * @param searchQuery
+	 * @param includeExtras
 	 * @param includeAllLanguages
 	 * @param includeReprints
 	 * @return {@code List<MtgCardInformation> listCards}
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static List<MtgCardInformation> getListCardsBySearch(String searchQuery, boolean includeAllLanguages,
-			boolean includeReprints) throws IOException, InterruptedException {
+	public static List<MtgCardInformation> getListCardsBySearch(String searchQuery, boolean includeExtras,
+			boolean includeAllLanguages, boolean includeReprints) throws IOException, InterruptedException {
 		List<MtgCardInformation> listCards = new ArrayList<>();
 		boolean firstIteration = true;
 		boolean hasMore = false;
-		URL nextPage = createCardSearchUrl(searchQuery, includeAllLanguages, includeReprints);
+		URL nextPage = createCardSearchUrl(searchQuery, includeExtras, includeAllLanguages, includeReprints);
 		do {
 			if (!firstIteration) {
 				Thread.sleep(100);

@@ -8,8 +8,8 @@ import java.util.Map;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import de.ics.scryfall.enums.Symbol;
 import de.ics.scryfall.enums.ImageType;
+import de.ics.scryfall.enums.Symbol;
 
 /**
  * Multiface Cards contain several instances of CardFace.

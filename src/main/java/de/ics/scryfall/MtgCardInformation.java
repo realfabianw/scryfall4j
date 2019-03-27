@@ -14,7 +14,6 @@ import com.google.gson.JsonObject;
 import com.neovisionaries.i18n.LanguageCode;
 
 import de.ics.scryfall.enums.BorderColor;
-import de.ics.scryfall.enums.Symbol;
 import de.ics.scryfall.enums.Frame;
 import de.ics.scryfall.enums.FrameEffect;
 import de.ics.scryfall.enums.Game;
@@ -25,6 +24,7 @@ import de.ics.scryfall.enums.PlayFormat;
 import de.ics.scryfall.enums.PriceType;
 import de.ics.scryfall.enums.Rarity;
 import de.ics.scryfall.enums.RelatedSite;
+import de.ics.scryfall.enums.Symbol;
 
 /**
  * MtgCardInformation represents an "Magic: The Gathering"-Card as it is stored
