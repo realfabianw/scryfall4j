@@ -196,7 +196,7 @@ public class Scryfall {
 
 	private static JsonElement request(String urlString) throws IOException {
 		URL url = new URL(urlString);
-		LOGGER.trace("Request: {}", url.toString());
+		LOGGER.debug("Request: {}", url.toString());
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
 		StringBuilder jsonString = new StringBuilder();
 		String line;
@@ -209,7 +209,7 @@ public class Scryfall {
 	}
 
 	private static JsonElement request(URL url) throws IOException {
-		LOGGER.trace("Request: {}", url.toString());
+		LOGGER.debug("Request: {}", url.toString());
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
 		StringBuilder jsonString = new StringBuilder();
 		String line;

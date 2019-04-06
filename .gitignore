@@ -101,7 +101,4 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
-files/config_exchanges.json
-files/config_exchanges.json
-files/config_exchanges_backup.json
-files/config_exchanges.json
+
