@@ -68,7 +68,11 @@ public class Scryfall {
 			}
 			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
 			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
-			nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
+			try {
+				nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
+			} catch (MalformedURLException e) {
+
+			}
 			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
 				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
 			}
