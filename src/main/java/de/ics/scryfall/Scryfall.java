@@ -56,6 +56,7 @@ public class Scryfall {
 	 * @throws InterruptedException
 	 */
 	public static List<MtgCardInformation> getListAllCards() throws IOException, InterruptedException {
+		List<JsonObject> listResponses = new ArrayList<>();
 		List<MtgCardInformation> listCards = new ArrayList<>();
 		boolean firstIteration = true;
 		boolean hasMore = false;
@@ -73,10 +74,13 @@ public class Scryfall {
 			} catch (MalformedURLException e) {
 
 			}
+			listResponses.add(jsonResponse);
+		} while (hasMore);
+		for (JsonObject jsonResponse : listResponses) {
 			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
 				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
 			}
-		} while (hasMore);
+		}
 		return listCards;
 	}
 
