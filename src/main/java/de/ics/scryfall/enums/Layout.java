@@ -15,7 +15,8 @@ public enum Layout {
 	SAGA("saga", "Saga-type cards"), PLANAR("planar", "Plane and Phenomenon-type cards"),
 	SCHEME("scheme", "Scheme-type cards"), VANGUARD("vanguard", "Vanguard-type cards"), TOKEN("token", "Token cards"),
 	DOUBLEFACEDTOKEN("double_faced_token", "Tokens with another token printed on the back"),
-	EMBLEM("emblem", "Emblem cards"), AUGMENT("augment", "Cards with Augment"), HOST("host", "Host-type cards");
+	EMBLEM("emblem", "Emblem cards"), AUGMENT("augment", "Cards with Augment"), HOST("host", "Host-type cards"),
+	ADVENTURE("adventure", "Cards with an Adventure spell part"), UNKNOWN("unknown", "Unknown layout");
 
 	public static Layout parseId(String id) {
 		for (Layout e : Layout.values()) {
@@ -23,7 +24,7 @@ public enum Layout {
 				return e;
 			}
 		}
-		throw new IllegalArgumentException("Couldn't find an enum matching this value: " + id);
+		return Layout.UNKNOWN;
 	}
 
 	private final String id;
