@@ -1,17 +1,17 @@
-package de.ics.scryfall.enums;
+package de.scryfall.enums;
 
 /**
- * This enum contains all rarities as of february 2019
+ * This enum contains all legalities as of february 2019
  * 
  * @see https://scryfall.com/docs/api/cards
  * @author QUE
  *
  */
-public enum Rarity {
-	COMMON("common"), UNCOMMON("uncommon"), RARE("rare"), MYTHIC("mythic");
+public enum Legality {
+	LEGAL("legal"), NOTLEGAL("not_legal"), RESTRICTED("restricted"), BANNED("banned");
 
-	public static Rarity parseId(String id) {
-		for (Rarity e : Rarity.values()) {
+	public static Legality parseId(String id) {
+		for (Legality e : Legality.values()) {
 			if (e.getId().equals(id)) {
 				return e;
 			}
@@ -21,7 +21,7 @@ public enum Rarity {
 
 	private final String id;
 
-	private Rarity(String id) {
+	private Legality(String id) {
 		this.id = id;
 	}
 

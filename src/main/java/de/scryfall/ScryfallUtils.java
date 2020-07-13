@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.scryfall;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.neovisionaries.i18n.LanguageCode;
 
-import de.ics.scryfall.enums.ImageType;
+import de.scryfall.enums.ImageType;
 
 /**
  * ScryfallUtils bundles several methods that help to use the API.

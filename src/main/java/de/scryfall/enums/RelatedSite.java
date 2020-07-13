@@ -1,4 +1,4 @@
-package de.ics.scryfall.enums;
+package de.scryfall.enums;
 
 /**
  * This enum contains all related site as of february 2019

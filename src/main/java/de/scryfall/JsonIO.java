@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.scryfall;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

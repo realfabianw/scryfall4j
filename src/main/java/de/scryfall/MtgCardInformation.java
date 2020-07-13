@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.scryfall;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,18 +13,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.neovisionaries.i18n.LanguageCode;
 
-import de.ics.scryfall.enums.BorderColor;
-import de.ics.scryfall.enums.Frame;
-import de.ics.scryfall.enums.FrameEffect;
-import de.ics.scryfall.enums.Game;
-import de.ics.scryfall.enums.ImageType;
-import de.ics.scryfall.enums.Layout;
-import de.ics.scryfall.enums.Legality;
-import de.ics.scryfall.enums.PlayFormat;
-import de.ics.scryfall.enums.PriceType;
-import de.ics.scryfall.enums.Rarity;
-import de.ics.scryfall.enums.RelatedSite;
-import de.ics.scryfall.enums.Symbol;
+import de.scryfall.enums.BorderColor;
+import de.scryfall.enums.Frame;
+import de.scryfall.enums.FrameEffect;
+import de.scryfall.enums.Game;
+import de.scryfall.enums.ImageType;
+import de.scryfall.enums.Layout;
+import de.scryfall.enums.Legality;
+import de.scryfall.enums.PlayFormat;
+import de.scryfall.enums.PriceType;
+import de.scryfall.enums.Rarity;
+import de.scryfall.enums.RelatedSite;
+import de.scryfall.enums.Symbol;
 
 /**
  * MtgCardInformation represents an "Magic: The Gathering"-Card as it is stored

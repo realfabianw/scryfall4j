@@ -1,11 +1,11 @@
-package de.ics.scryfall;
+package de.scryfall;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.google.gson.JsonObject;
 
-import de.ics.scryfall.enums.SetType;
+import de.scryfall.enums.SetType;
 
 /**
  * MtgSetInformation represents a group of related "Magic: The Gathering"-Cards.

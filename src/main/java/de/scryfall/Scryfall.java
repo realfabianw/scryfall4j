@@ -1,4 +1,4 @@
-package de.ics.scryfall;
+package de.scryfall;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,12 +31,12 @@ public class Scryfall {
 	private static final String CARDS = "cards/";
 	private static final String SEARCH_QUERY = "search?q=";
 
-	private static URL createCardSearchUrl(String urlString, boolean includeExtras, boolean includeAllLanguages,
+	private static String createCardSearchUrl(String urlString, boolean includeExtras, boolean includeAllLanguages,
 			boolean includeReprints) throws UnsupportedEncodingException, MalformedURLException {
-		return new URL(API + CARDS + SEARCH_QUERY
+		return API + CARDS + SEARCH_QUERY
 				+ URLEncoder.encode(urlString + (includeExtras ? " include:extras" : "")
 						+ (includeAllLanguages ? " lang:any" : "") + (includeReprints ? " unique:prints" : ""),
-						"UTF-8"));
+						"UTF-8");
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class Scryfall {
 		List<MtgCardInformation> listCards = new ArrayList<>();
 		boolean firstIteration = true;
 		boolean hasMore = false;
-		URL nextPage = new URL(API + CARDS);
+		String nextPage = API + CARDS;
 		do {
 			if (!firstIteration) {
 				Thread.sleep(100);
@@ -69,11 +69,7 @@ public class Scryfall {
 			}
 			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
 			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
-			try {
-				nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
-			} catch (MalformedURLException e) {
-
-			}
+			nextPage = JsonIO.parseString(jsonResponse, "next_page");
 			listResponses.add(jsonResponse);
 		} while (hasMore);
 		for (JsonObject jsonResponse : listResponses) {
@@ -113,7 +109,7 @@ public class Scryfall {
 		List<MtgCardInformation> listCards = new ArrayList<>();
 		boolean firstIteration = true;
 		boolean hasMore = false;
-		URL nextPage = createCardSearchUrl(searchQuery, includeExtras, includeAllLanguages, includeReprints);
+		String nextPage = createCardSearchUrl(searchQuery, includeExtras, includeAllLanguages, includeReprints);
 		do {
 			if (!firstIteration) {
 				Thread.sleep(100);
@@ -122,11 +118,7 @@ public class Scryfall {
 			}
 			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
 			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
-			try {
-				nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
-			} catch (MalformedURLException e) {
-
-			}
+			nextPage = JsonIO.parseString(jsonResponse, "next_page");
 			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
 				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
 			}
@@ -148,7 +140,7 @@ public class Scryfall {
 		List<MtgCardInformation> listCards = new ArrayList<>();
 		boolean firstIteration = true;
 		boolean hasMore = false;
-		URL nextPage = new URL(mtgSetInformation.getSearchApiUrl());
+		String nextPage = mtgSetInformation.getSearchApiUrl();
 		do {
 			if (!firstIteration) {
 				Thread.sleep(100);
@@ -157,11 +149,7 @@ public class Scryfall {
 			}
 			JsonObject jsonResponse = request(nextPage).getAsJsonObject();
 			hasMore = JsonIO.parseBoolean(jsonResponse, "has_more");
-			try {
-				nextPage = new URL(JsonIO.parseString(jsonResponse, "next_page"));
-			} catch (MalformedURLException e) {
-
-			}
+			nextPage = JsonIO.parseString(jsonResponse, "next_page");
 			for (JsonElement jElement : jsonResponse.get("data").getAsJsonArray()) {
 				listCards.add(new MtgCardInformation(jElement.getAsJsonObject()));
 			}
@@ -215,18 +203,4 @@ public class Scryfall {
 		LOGGER.trace("Response: {}", jsonString.toString());
 		return new JsonParser().parse(jsonString.toString());
 	}
-
-	private static JsonElement request(URL url) throws IOException {
-		LOGGER.debug("Request: {}", url.toString());
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-		StringBuilder jsonString = new StringBuilder();
-		String line;
-		while ((line = bufferedReader.readLine()) != null) {
-			jsonString.append(line);
-		}
-		bufferedReader.close();
-		LOGGER.trace("Response: {}", jsonString.toString());
-		return new JsonParser().parse(jsonString.toString());
-	}
-
 }
