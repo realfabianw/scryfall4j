@@ -1,4 +1,4 @@
-# Scryfall4j
+# scryfall4j
 > A Java wrapper for the official <a href="https://scryfall.com/docs/api">Scryfall API</a>
 ## Features
 Scryfall4j tries to implement every feature offered by the official REST API.
