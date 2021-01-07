@@ -18,7 +18,7 @@ for (MtgCardInformation card : listCards) {
 	System.out.println(card);
 }
 ```
-### Get information about any set just by it's code
+### Get information about any set just by its code
 ```java
 MtgSetInformation battlebond = getSetByCode("BBD");
 battlebond.getCardCount();
