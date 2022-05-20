@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.scryfall4j</groupId>
 	<properties>
-		<version.gson>2.8.5</version.gson>
+		<version.gson>2.8.9</version.gson>
 		<version.logback>1.2.3</version.logback>
 		<version.batik-transcoder>1.10</version.batik-transcoder>
 		<version.batik-codec>1.9</version.batik-codec>
