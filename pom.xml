@@ -6,7 +6,7 @@
 	<properties>
 		<version.gson>2.8.5</version.gson>
 		<version.logback>1.2.3</version.logback>
-		<version.batik-transcoder>1.10</version.batik-transcoder>
+		<version.batik-transcoder>1.17</version.batik-transcoder>
 		<version.batik-codec>1.9</version.batik-codec>
 		<version.nv-i18n>1.24</version.nv-i18n>
 
